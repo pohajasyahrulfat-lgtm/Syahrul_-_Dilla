@@ -12,6 +12,8 @@ This folder contains the database schema for replacing the Ulems API.
 6. Copy the project's URL and anon key from **Project Settings > API**. The anon key is safe for browser code; never expose the service-role key.
 7. If the schema was run before the asset columns were added, run the complete updated `schema.sql` again. It is idempotent and will add the missing columns and Storage bucket.
 
+The dashboard editor can manage the main invitation content: couple names and nicknames, parents, welcome title, cover slides, thumbnail photos, akad and reception dates/times, location and Google Maps URL, love-story text/video, gallery images, music, and basic bank gift details.
+
 Example invitation row:
 
 ```sql

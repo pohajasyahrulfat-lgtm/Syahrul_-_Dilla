@@ -22,6 +22,9 @@ create table if not exists public.invitations (
     groom_photo_url text not null default '',
     bride_photo_url text not null default '',
     audio_url text not null default '',
+    cover_urls jsonb not null default '[]'::jsonb,
+    gallery_urls jsonb not null default '[]'::jsonb,
+    content jsonb not null default '{}'::jsonb,
     timezone text not null default 'Asia/Jakarta',
     is_published boolean not null default true,
     created_at timestamptz not null default now(),
@@ -31,6 +34,9 @@ create table if not exists public.invitations (
 alter table public.invitations add column if not exists groom_photo_url text not null default '';
 alter table public.invitations add column if not exists bride_photo_url text not null default '';
 alter table public.invitations add column if not exists audio_url text not null default '';
+alter table public.invitations add column if not exists cover_urls jsonb not null default '[]'::jsonb;
+alter table public.invitations add column if not exists gallery_urls jsonb not null default '[]'::jsonb;
+alter table public.invitations add column if not exists content jsonb not null default '{}'::jsonb;
 
 create table if not exists public.comments (
     id uuid primary key default gen_random_uuid(),

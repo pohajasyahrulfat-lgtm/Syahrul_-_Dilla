@@ -93,7 +93,10 @@ const uploadAsset = async (file, ownerId, type) => {
     return `${SUPABASE_URL}/storage/v1/object/public/invitation-assets/${path}`;
 };
 
+const uploadAssets = async (files, ownerId, type) => Promise.all(Array.from(files ?? []).map((file) => uploadAsset(file, ownerId, type)));
+
 const loadForm = (invitation, email) => {
+    const content = invitation.content ?? {};
     setText('dashboard-email', email);
     setText('dashboard-name', invitation.groom_name && invitation.bride_name
         ? `${invitation.groom_name} & ${invitation.bride_name}`
@@ -108,6 +111,23 @@ const loadForm = (invitation, email) => {
     setText('invitation-groom-photo-current', invitation.groom_photo_url ? 'Foto tersimpan' : 'Belum ada foto');
     setText('invitation-bride-photo-current', invitation.bride_photo_url ? 'Foto tersimpan' : 'Belum ada foto');
     setText('invitation-audio-current', invitation.audio_url ? 'Musik tersimpan' : 'Belum ada musik');
+    setValue('invitation-welcome-title', content.welcome_title);
+    setValue('invitation-groom-nickname', content.groom_nickname);
+    setValue('invitation-bride-nickname', content.bride_nickname);
+    setValue('invitation-groom-parents', content.groom_parents);
+    setValue('invitation-bride-parents', content.bride_parents);
+    setValue('invitation-akad-date', content.akad_date);
+    setValue('invitation-akad-time', content.akad_time);
+    setValue('invitation-reception-date', content.reception_date);
+    setValue('invitation-reception-time', content.reception_time);
+    setValue('invitation-maps-url', content.maps_url);
+    setValue('invitation-story-description', content.story_description);
+    setValue('invitation-story-video-url', content.story_video_url);
+    setValue('invitation-gift-bank-name', content.gift_bank_name);
+    setValue('invitation-gift-account', content.gift_account);
+    setValue('invitation-gift-owner', content.gift_owner);
+    setText('invitation-gallery-current', `${(invitation.gallery_urls ?? []).length} foto tersimpan`);
+    setText('invitation-cover-current', `${(invitation.cover_urls ?? []).length} cover tersimpan`);
 };
 
 const login = async (button) => {
@@ -155,14 +175,35 @@ const saveInvitation = async (button) => {
             location: document.getElementById('invitation-location').value.trim(),
             description: document.getElementById('invitation-description').value.trim(),
             timezone: document.getElementById('invitation-timezone').value.trim() || 'Asia/Jakarta',
+            content: {
+                welcome_title: document.getElementById('invitation-welcome-title').value.trim(),
+                groom_nickname: document.getElementById('invitation-groom-nickname').value.trim(),
+                bride_nickname: document.getElementById('invitation-bride-nickname').value.trim(),
+                groom_parents: document.getElementById('invitation-groom-parents').value.trim(),
+                bride_parents: document.getElementById('invitation-bride-parents').value.trim(),
+                akad_date: document.getElementById('invitation-akad-date').value,
+                akad_time: document.getElementById('invitation-akad-time').value.trim(),
+                reception_date: document.getElementById('invitation-reception-date').value,
+                reception_time: document.getElementById('invitation-reception-time').value.trim(),
+                maps_url: document.getElementById('invitation-maps-url').value.trim(),
+                story_description: document.getElementById('invitation-story-description').value.trim(),
+                story_video_url: document.getElementById('invitation-story-video-url').value.trim(),
+                gift_bank_name: document.getElementById('invitation-gift-bank-name').value.trim(),
+                gift_account: document.getElementById('invitation-gift-account').value.trim(),
+                gift_owner: document.getElementById('invitation-gift-owner').value.trim(),
+            },
         };
         const groomPhoto = await uploadAsset(document.getElementById('invitation-groom-photo').files[0], session.user.id, 'groom');
         const bridePhoto = await uploadAsset(document.getElementById('invitation-bride-photo').files[0], session.user.id, 'bride');
         const audio = await uploadAsset(document.getElementById('invitation-audio').files[0], session.user.id, 'audio');
+        const covers = await uploadAssets(document.getElementById('invitation-covers').files, session.user.id, 'cover');
+        const gallery = await uploadAssets(document.getElementById('invitation-gallery').files, session.user.id, 'gallery');
 
         if (groomPhoto) values.groom_photo_url = groomPhoto;
         if (bridePhoto) values.bride_photo_url = bridePhoto;
         if (audio) values.audio_url = audio;
+        if (covers.length) values.cover_urls = covers;
+        if (gallery.length) values.gallery_urls = gallery;
 
         await updateInvitation(invitation.id, values);
         loadForm({ ...invitation, ...values }, session.user.email);

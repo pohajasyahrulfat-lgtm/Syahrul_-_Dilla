@@ -47,6 +47,53 @@ export const guest = (() => {
             if (invitation.audio_url) {
                 document.body.dataset.audio = invitation.audio_url;
             }
+            const content = invitation.content ?? {};
+            const setText = (selector, value) => {
+                if (value) {
+                    document.querySelectorAll(selector).forEach((element) => {
+                        element.textContent = value;
+                    });
+                }
+            };
+            setText('[data-invitation-welcome-title]', content.welcome_title);
+            setText('[data-invitation-groom-nickname]', content.groom_nickname);
+            setText('[data-invitation-bride-nickname]', content.bride_nickname);
+            setText('[data-invitation-groom-parents]', content.groom_parents);
+            setText('[data-invitation-bride-parents]', content.bride_parents);
+            setText('[data-invitation-akad-time]', content.akad_time);
+            setText('[data-invitation-reception-time]', content.reception_time);
+            setText('[data-invitation-akad-date]', content.akad_date && new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(`${content.akad_date}T00:00:00`)));
+            setText('[data-invitation-reception-date]', content.reception_date && new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(`${content.reception_date}T00:00:00`)));
+            setText('[data-invitation-story-description]', content.story_description);
+            setText('[data-invitation-gift-bank]', content.gift_bank_name);
+            setText('[data-invitation-gift-account]', content.gift_account);
+            setText('[data-invitation-gift-owner]', content.gift_owner);
+            setText('[data-invitation-location]', invitation.location);
+            const maps = document.querySelector('[data-invitation-maps]');
+            if (maps && content.maps_url) {
+                maps.href = content.maps_url;
+            }
+            const storyVideo = document.querySelector('[data-invitation-story-video]');
+            if (storyVideo && content.story_video_url) {
+                storyVideo.dataset.src = content.story_video_url;
+            }
+            const coverUrls = invitation.cover_urls ?? [];
+            document.querySelectorAll('[data-invitation-cover]').forEach((element) => {
+                const key = element.dataset.invitationCover;
+                const url = key === 'thumbnail' || key === 'home'
+                    ? coverUrls[0]
+                    : coverUrls[Number(key)];
+                if (url) {
+                    element.dataset.src = url;
+                }
+            });
+            const galleryUrls = invitation.gallery_urls ?? [];
+            document.querySelectorAll('[data-invitation-gallery]').forEach((element) => {
+                const url = galleryUrls[Number(element.dataset.invitationGallery)];
+                if (url) {
+                    element.dataset.src = url;
+                }
+            });
             const groomPhoto = document.querySelector('[data-invitation-photo="groom"]');
             const bridePhoto = document.querySelector('[data-invitation-photo="bride"]');
             if (invitation.groom_photo_url && groomPhoto) {
