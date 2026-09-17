@@ -32,6 +32,18 @@ export const guest = (() => {
             document.body.dataset.time = invitation.event_date
                 ? invitation.event_date.replace('T', ' ').replace(/\.\d+\+/, '+').slice(0, 19)
                 : document.body.dataset.time;
+            if (invitation.event_date) {
+                const eventDate = new Date(invitation.event_date);
+                const dateElement = document.querySelector('[data-invitation-date]');
+                if (dateElement && !Number.isNaN(eventDate.getTime())) {
+                    dateElement.textContent = new Intl.DateTimeFormat('id-ID', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                    }).format(eventDate);
+                }
+            }
             if (invitation.audio_url) {
                 document.body.dataset.audio = invitation.audio_url;
             }
