@@ -165,8 +165,8 @@ const saveInvitation = async (button) => {
         if (audio) values.audio_url = audio;
 
         await updateInvitation(invitation.id, values);
+        loadForm({ ...invitation, ...values }, session.user.email);
         notify('Data undangan berhasil disimpan.');
-        window.setTimeout(() => window.location.reload(), 500);
     } catch (error) {
         notify(error.message, 'warning');
         button.disabled = false;
