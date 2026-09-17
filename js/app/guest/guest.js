@@ -34,14 +34,16 @@ export const guest = (() => {
                 : document.body.dataset.time;
             if (invitation.event_date) {
                 const eventDate = new Date(invitation.event_date);
-                const dateElement = document.querySelector('[data-invitation-date]');
-                if (dateElement && !Number.isNaN(eventDate.getTime())) {
-                    dateElement.textContent = new Intl.DateTimeFormat('id-ID', {
+                if (!Number.isNaN(eventDate.getTime())) {
+                    const formattedDate = new Intl.DateTimeFormat('id-ID', {
                         weekday: 'long',
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
                     }).format(eventDate);
+                    document.querySelectorAll('[data-invitation-date]').forEach((element) => {
+                        element.textContent = formattedDate;
+                    });
                 }
             }
             if (invitation.audio_url) {
@@ -60,6 +62,7 @@ export const guest = (() => {
             setText('[data-invitation-bride-nickname]', content.bride_nickname);
             setText('[data-invitation-groom-parents]', content.groom_parents);
             setText('[data-invitation-bride-parents]', content.bride_parents);
+            setText('[data-invitation-description]', invitation.description);
             setText('[data-invitation-akad-time]', content.akad_time);
             setText('[data-invitation-reception-time]', content.reception_time);
             setText('[data-invitation-akad-date]', content.akad_date && new Intl.DateTimeFormat('id-ID', { dateStyle: 'long' }).format(new Date(`${content.akad_date}T00:00:00`)));
@@ -347,19 +350,21 @@ export const guest = (() => {
      */
     const buildGoogleCalendar = () => {
         /**
-         * @param {string} d 
+         * @param {Date} date
          * @returns {string}
          */
-        const formatDate = (d) => (new Date(d.replace(' ', 'T') + ':00Z')).toISOString().replace(/[-:]/g, '').split('.').shift();
+        const formatDate = (date) => date.toISOString().replace(/[-:]/g, '').split('.').shift();
 
         const url = new URL('https://calendar.google.com/calendar/render');
+        const start = new Date(document.body.dataset.time.replace(' ', 'T'));
+        const end = new Date(start.getTime() + (60 * 60 * 1000));
         const data = new URLSearchParams({
             action: 'TEMPLATE',
-            text: 'The Wedding of Wahyu and Riski',
-            dates: `${formatDate('2023-03-15 10:00')}/${formatDate('2023-03-15 11:00')}`,
-            details: 'Tanpa mengurangi rasa hormat, kami mengundang Anda untuk berkenan menghadiri acara pernikahan kami. Terima kasih atas perhatian dan doa restu Anda, yang menjadi kebahagiaan serta kehormatan besar bagi kami.',
-            location: 'RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191.',
-            ctz: config.get('tz'),
+            text: `${document.querySelector('[data-invitation-groom]')?.textContent ?? ''} & ${document.querySelector('[data-invitation-bride]')?.textContent ?? ''}`,
+            dates: `${formatDate(start)}/${formatDate(end)}`,
+            details: document.querySelector('[data-invitation-description]')?.textContent ?? '',
+            location: document.querySelector('[data-invitation-location]')?.textContent ?? '',
+            ctz: config.get('tz') ?? 'Asia/Jakarta',
         });
 
         url.search = data.toString();
