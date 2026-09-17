@@ -10,6 +10,7 @@ This folder contains the database schema for replacing the Ulems API.
 4. Create the first user from **Authentication > Users > Add user**.
 5. Insert that user's invitation in **Table Editor > invitations**. Use the user's UUID as `owner_id` and choose a unique `slug`.
 6. Copy the project's URL and anon key from **Project Settings > API**. The anon key is safe for browser code; never expose the service-role key.
+7. If the schema was run before the asset columns were added, run the complete updated `schema.sql` again. It is idempotent and will add the missing columns and Storage bucket.
 
 Example invitation row:
 
@@ -27,6 +28,6 @@ values (
 
 ## Important
 
-The guest page now reads the published invitation from Supabase using the `slug` query parameter. Open it with `?slug=syahrul-dilla`. The existing dashboard still calls `https://api.ulems.my.id/`; migrating admin login, comments, likes, and statistics is a separate step.
+The guest page reads the published invitation from Supabase using the `slug` query parameter. Open it with `?slug=syahrul-dilla`. The dashboard login and invitation editor now use Supabase Auth/REST, including photo and music uploads. Legacy comment, like, and statistics controls are not migrated yet.
 
 Never commit a Supabase service-role key. Only the project URL and anon/publishable key belong in frontend configuration.

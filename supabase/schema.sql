@@ -19,11 +19,18 @@ create table if not exists public.invitations (
     event_date timestamptz,
     location text not null default '',
     description text not null default '',
+    groom_photo_url text not null default '',
+    bride_photo_url text not null default '',
+    audio_url text not null default '',
     timezone text not null default 'Asia/Jakarta',
     is_published boolean not null default true,
     created_at timestamptz not null default now(),
     updated_at timestamptz not null default now()
 );
+
+alter table public.invitations add column if not exists groom_photo_url text not null default '';
+alter table public.invitations add column if not exists bride_photo_url text not null default '';
+alter table public.invitations add column if not exists audio_url text not null default '';
 
 create table if not exists public.comments (
     id uuid primary key default gen_random_uuid(),
@@ -138,4 +145,27 @@ drop policy if exists comments_owner_delete on public.comments;
 create policy comments_owner_delete on public.comments
 for delete to authenticated using (
     exists (select 1 from public.invitations i where i.id = invitation_id and i.owner_id = (select auth.uid()))
+);
+
+insert into storage.buckets (id, name, public)
+values ('invitation-assets', 'invitation-assets', true)
+on conflict (id) do update set public = excluded.public;
+
+drop policy if exists invitation_assets_public_read on storage.objects;
+create policy invitation_assets_public_read on storage.objects
+for select to anon, authenticated using (bucket_id = 'invitation-assets');
+
+drop policy if exists invitation_assets_owner_insert on storage.objects;
+create policy invitation_assets_owner_insert on storage.objects
+for insert to authenticated with check (
+    bucket_id = 'invitation-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
+);
+
+drop policy if exists invitation_assets_owner_update on storage.objects;
+create policy invitation_assets_owner_update on storage.objects
+for update to authenticated using (
+    bucket_id = 'invitation-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
+)
+with check (
+    bucket_id = 'invitation-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
 );

@@ -8,7 +8,7 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7lwxKeKavEOl8vS-syIqEQ_-NCebh-a
  */
 export const getInvitation = (slug) => {
     const url = new URL(`${SUPABASE_URL}/rest/v1/invitations`);
-    url.searchParams.set('select', 'slug,groom_name,bride_name,event_date,location,description,timezone,is_published');
+    url.searchParams.set('select', 'slug,groom_name,bride_name,event_date,location,description,timezone,is_published,groom_photo_url,bride_photo_url,audio_url');
     url.searchParams.set('slug', `eq.${slug}`);
     url.searchParams.set('is_published', 'eq.true');
     url.searchParams.set('limit', '1');

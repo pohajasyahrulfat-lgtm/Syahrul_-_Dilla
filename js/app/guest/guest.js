@@ -32,6 +32,17 @@ export const guest = (() => {
             document.body.dataset.time = invitation.event_date
                 ? invitation.event_date.replace('T', ' ').replace(/\.\d+\+/, '+').slice(0, 19)
                 : document.body.dataset.time;
+            if (invitation.audio_url) {
+                document.body.dataset.audio = invitation.audio_url;
+            }
+            const groomPhoto = document.querySelector('[data-invitation-photo="groom"]');
+            const bridePhoto = document.querySelector('[data-invitation-photo="bride"]');
+            if (invitation.groom_photo_url && groomPhoto) {
+                groomPhoto.setAttribute('data-src', invitation.groom_photo_url);
+            }
+            if (invitation.bride_photo_url && bridePhoto) {
+                bridePhoto.setAttribute('data-src', invitation.bride_photo_url);
+            }
             document.querySelectorAll('[data-invitation-groom]').forEach((element) => {
                 element.textContent = invitation.groom_name;
             });

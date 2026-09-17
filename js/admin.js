@@ -1,5 +1,5 @@
-import { admin } from './app/admin/admin.js';
+import { init } from './app/admin/supabase-admin.js';
 
 ((w) => {
-    w.undangan = admin.init();
+    w.undangan = init();
 })(window);

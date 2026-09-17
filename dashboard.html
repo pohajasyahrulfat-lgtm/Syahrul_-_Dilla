@@ -279,6 +279,59 @@
                             </div>
                         </div>
 
+                        <!-- Invitation -->
+                        <div class="p-3 bg-theme-auto mb-3 rounded-4 shadow">
+                            <p class="mx-0 mt-0 mb-1 p-0 fw-bold"><i class="fa-solid fa-heart me-2"></i>Wedding Invitation</p>
+                            <div class="mb-2">
+                                <label for="invitation-slug" class="form-label small">Slug</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-slug" required>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label for="invitation-groom-name" class="form-label small">Groom name</label>
+                                    <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-groom-name" required>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label for="invitation-bride-name" class="form-label small">Bride name</label>
+                                    <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-bride-name" required>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-date" class="form-label small">Event date</label>
+                                <input type="datetime-local" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-date">
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-location" class="form-label small">Location</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-location">
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-description" class="form-label small">Description</label>
+                                <textarea class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-description" rows="2"></textarea>
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-timezone" class="form-label small">Timezone</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-timezone" value="Asia/Jakarta">
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-groom-photo" class="form-label small">Groom photo</label>
+                                <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-groom-photo" accept="image/*">
+                                <small id="invitation-groom-photo-current" class="text-secondary"></small>
+                            </div>
+                            <div class="mb-2">
+                                <label for="invitation-bride-photo" class="form-label small">Bride photo</label>
+                                <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-bride-photo" accept="image/*">
+                                <small id="invitation-bride-photo-current" class="text-secondary"></small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="invitation-audio" class="form-label small">Music</label>
+                                <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-audio" accept="audio/*">
+                                <small id="invitation-audio-current" class="text-secondary"></small>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-primary rounded-4 shadow-sm" onclick="undangan.admin.saveInvitation(this)">Save invitation</button>
+                            </div>
+                        </div>
+
                         <!-- Access Key -->
                         <div class="p-3 bg-theme-auto mb-3 rounded-4 shadow">
                             <p class="mx-0 mt-0 mb-1 p-0 fw-bold"><i class="fa-solid fa-key me-2"></i>Access Key</p>
@@ -400,7 +453,7 @@
                             <input type="password" class="form-control shadow-sm rounded-4" id="loginPassword" minlength="8" maxlength="20" placeholder="Enter your password" required autocomplete="current-password" data-offline-disabled="false">
                         </div>
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary shadow-sm rounded-4" onclick="undangan.admin.auth.login(this)" data-offline-disabled="false"><i class="fa-solid fa-right-to-bracket me-2"></i>Login</button>
+                            <button type="button" class="btn btn-primary shadow-sm rounded-4" onclick="undangan.admin.auth.login(this)" data-offline-disabled="false"><i class="fa-solid fa-right-to-bracket me-2"></i>Login</button>
                         </div>
                     </form>
                 </div>
