@@ -23,6 +23,7 @@ Untuk kamu yang ingin melihat demo terlebih dahulu:
 * Untuk deployment manual, jalankan `npm run build:public`. Folder `public` adalah hasil build yang dapat kamu upload.
 * Untuk GitHub Pages, push branch `main`. Workflow `.github/workflows/deploy-pages.yml` akan membangun dan menerbitkan website secara otomatis.
 * Setelah workflow selesai, buka **Settings > Pages** di repository dan pastikan **Source** menggunakan **GitHub Actions**.
+* Untuk mengganti API Ulems dengan backend sendiri, ikuti panduan di [supabase/README.md](supabase/README.md) dan jalankan [supabase/schema.sql](supabase/schema.sql) di Supabase SQL Editor. Halaman tamu menggunakan URL `?slug=syahrul-dilla`; dashboard admin lama masih memakai API Ulems.
 * Untuk backend self-hosting, lihat penjelasan di bawah, atau gunakan **trial API** secara gratis.
 
 > Undangan ini hanya menggunakan HTML, CSS, dan JavaScript biasa. NPM digunakan agar file JavaScript bisa langsung dieksekusi (bukan bertipe module lagi).

@@ -13,8 +13,38 @@ import { offline } from '../../common/offline.js';
 import { comment } from '../components/comment.js';
 import * as confetti from '../../libs/confetti.js';
 import { pool } from '../../connection/request.js';
+import { getInvitation } from '../../connection/supabase.js';
 
 export const guest = (() => {
+
+    /**
+     * @returns {Promise<void>}
+     */
+    const loadInvitation = async () => {
+        const slug = new URLSearchParams(window.location.search).get('slug') ?? 'syahrul-dilla';
+
+        try {
+            const invitation = await getInvitation(slug);
+            if (!invitation) {
+                return;
+            }
+
+            document.body.dataset.time = invitation.event_date
+                ? invitation.event_date.replace('T', ' ').replace(/\.\d+\+/, '+').slice(0, 19)
+                : document.body.dataset.time;
+            document.querySelectorAll('[data-invitation-groom]').forEach((element) => {
+                element.textContent = invitation.groom_name;
+            });
+            document.querySelectorAll('[data-invitation-bride]').forEach((element) => {
+                element.textContent = invitation.bride_name;
+            });
+            document.querySelectorAll('[data-invitation-location]').forEach((element) => {
+                element.textContent = invitation.location;
+            });
+        } catch (error) {
+            console.warn('Supabase invitation could not be loaded.', error);
+        }
+    };
 
     /**
      * @type {ReturnType<typeof storage>|null}
@@ -316,7 +346,8 @@ export const guest = (() => {
     /**
      * @returns {void}
      */
-    const pageLoaded = () => {
+    const pageLoaded = async () => {
+        await loadInvitation();
         lang.init();
         offline.init();
         comment.init();
