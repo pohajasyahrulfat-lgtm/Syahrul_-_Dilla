@@ -48,6 +48,8 @@ export const guest = (() => {
             }
             if (invitation.audio_url) {
                 document.body.dataset.audio = invitation.audio_url;
+            } else {
+                document.body.removeAttribute('data-audio');
             }
             const content = invitation.content ?? {};
             const setVisibility = (name, visible) => {
