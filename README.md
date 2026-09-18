@@ -26,6 +26,16 @@ Untuk kamu yang ingin melihat demo terlebih dahulu:
 * Untuk mengganti API Ulems dengan backend sendiri, ikuti panduan di [supabase/README.md](supabase/README.md) dan jalankan [supabase/schema.sql](supabase/schema.sql) di Supabase SQL Editor. Halaman tamu menggunakan URL `?slug=syahrul-dilla`; dashboard admin lama masih memakai API Ulems.
 * Untuk backend self-hosting, lihat penjelasan di bawah, atau gunakan **trial API** secara gratis.
 
+### Thumbnail WhatsApp
+
+WhatsApp tidak menjalankan JavaScript saat membaca preview link. Karena itu, gunakan URL `Share link WhatsApp` dari dashboard setelah Edge Function `supabase/functions/share` dideploy:
+
+```bash
+supabase functions deploy share --no-verify-jwt
+```
+
+URL tersebut membaca `share_image_url` dan `share_description` dari Supabase, lalu mengarahkan pengunjung ke halaman GitHub Pages. Jangan pernah memasukkan `SUPABASE_SERVICE_ROLE_KEY` ke JavaScript browser.
+
 > Undangan ini hanya menggunakan HTML, CSS, dan JavaScript biasa. NPM digunakan agar file JavaScript bisa langsung dieksekusi (bukan bertipe module lagi).
 
 > Jika tetap ingin tanpa NPM, ubah `src="./dist/guest.js"` menjadi `src="./js/guest.js" type="module"` pada tag `<head>` di index dan dashboard.html, dengan risiko glitch tema di awal loading.

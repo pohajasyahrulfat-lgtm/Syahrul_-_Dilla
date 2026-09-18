@@ -304,6 +304,14 @@
                                 <small id="invitation-share-image-current" class="text-secondary"></small>
                                 <button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('share_image_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus thumbnail</button>
                             </div>
+                            <div class="mb-2">
+                                <label for="invitation-share-url" class="form-label small">Share link WhatsApp</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="url" class="form-control rounded-start-4 shadow-sm" id="invitation-share-url" readonly>
+                                    <button type="button" class="btn btn-outline-secondary rounded-end-4" id="invitation-share-copy" data-copy="" onclick="undangan.util.copy(this)" aria-label="Copy share link"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                                <small class="text-secondary">Gunakan link ini agar thumbnail tampil saat dibagikan.</small>
+                            </div>
                             <hr>
                             <p class="fw-bold mb-2">Cover and couple</p>
                             <div class="mb-2">

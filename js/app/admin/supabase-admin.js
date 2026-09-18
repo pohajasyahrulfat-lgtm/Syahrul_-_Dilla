@@ -68,6 +68,18 @@ const setText = (id, value) => {
     }
 };
 
+const setShareUrl = (slug) => {
+    const input = document.getElementById('invitation-share-url');
+    const button = document.getElementById('invitation-share-copy');
+    const shareUrl = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug ?? '')}`;
+    if (input) {
+        input.value = shareUrl;
+    }
+    if (button) {
+        button.setAttribute('data-copy', shareUrl);
+    }
+};
+
 const getInvitation = async (ownerId) => {
     const query = new URLSearchParams({
         select: '*',
@@ -143,6 +155,7 @@ const loadForm = (invitation, email) => {
         ? `${invitation.groom_name} & ${invitation.bride_name}`
         : invitation.slug);
     setValue('invitation-slug', invitation.slug);
+    setShareUrl(invitation.slug);
     setValue('invitation-groom-name', invitation.groom_name);
     setValue('invitation-bride-name', invitation.bride_name);
     setValue('invitation-date', invitation.event_date ? invitation.event_date.slice(0, 16) : '');
