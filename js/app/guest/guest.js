@@ -52,6 +52,15 @@ export const guest = (() => {
                 document.body.removeAttribute('data-audio');
             }
             const content = invitation.content ?? {};
+            const shareTitle = `${invitation.groom_name} & ${invitation.bride_name}`;
+            const shareDescription = content.share_description || invitation.description;
+            const shareImage = content.share_image_url || invitation.cover_urls?.[0];
+            document.title = shareTitle;
+            document.querySelector('meta[name="description"]')?.setAttribute('content', shareDescription);
+            document.querySelector('meta[property="og:title"]')?.setAttribute('content', shareTitle);
+            document.querySelector('meta[property="og:description"]')?.setAttribute('content', shareDescription);
+            document.querySelector('meta[property="og:image"]')?.setAttribute('content', shareImage || '');
+            document.querySelector('meta[property="og:image:secure_url"]')?.setAttribute('content', shareImage || '');
             const setVisibility = (name, visible) => {
                 const section = document.querySelector(`[data-invitation-section="${name}"]`);
                 if (section) section.classList.toggle('d-none', visible === false);
@@ -84,18 +93,6 @@ export const guest = (() => {
             setText('[data-invitation-gift-owner]', content.gift_owner);
             setText('[data-invitation-gift-phone]', content.gift_phone);
             setText('[data-invitation-gift-address]', content.gift_address);
-            const socialLinks = {
-                instagram: content.instagram_url,
-                facebook: content.facebook_url,
-                whatsapp: content.whatsapp_url,
-            };
-            Object.entries(socialLinks).forEach(([name, url]) => {
-                const item = document.querySelector(`[data-invitation-social="${name}"]`);
-                if (item) {
-                    item.classList.toggle('d-none', !url);
-                    if (url) item.querySelector('a').href = url;
-                }
-            });
             const qris = document.querySelector('[data-invitation-qris]');
             if (qris && content.qris_url) qris.dataset.src = content.qris_url;
             setText('[data-invitation-location]', invitation.location);

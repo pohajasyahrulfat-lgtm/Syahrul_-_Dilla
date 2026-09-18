@@ -148,6 +148,7 @@ const loadForm = (invitation, email) => {
     setValue('invitation-date', invitation.event_date ? invitation.event_date.slice(0, 16) : '');
     setValue('invitation-location', invitation.location);
     setValue('invitation-description', invitation.description);
+    setValue('invitation-share-description', content.share_description ?? invitation.description);
     setValue('invitation-timezone', invitation.timezone);
     setText('invitation-groom-photo-current', invitation.groom_photo_url ? 'Foto tersimpan' : 'Belum ada foto');
     setText('invitation-bride-photo-current', invitation.bride_photo_url ? 'Foto tersimpan' : 'Belum ada foto');
@@ -171,9 +172,6 @@ const loadForm = (invitation, email) => {
     setValue('invitation-gift-owner', content.gift_owner);
     setValue('invitation-gift-phone', content.gift_phone);
     setValue('invitation-gift-address', content.gift_address);
-    setValue('invitation-instagram', content.instagram_url);
-    setValue('invitation-facebook', content.facebook_url);
-    setValue('invitation-whatsapp', content.whatsapp_url);
     const setChecked = (id, value) => {
         const element = document.getElementById(id);
         if (element) element.checked = value !== false;
@@ -184,6 +182,7 @@ const loadForm = (invitation, email) => {
     setText('invitation-gallery-current', `${(invitation.gallery_urls ?? []).length} foto tersimpan`);
     setText('invitation-cover-current', `${(invitation.cover_urls ?? []).length} cover tersimpan`);
     setText('invitation-qris-current', content.qris_url ? 'QRIS tersimpan' : 'Belum ada QRIS');
+    setText('invitation-share-image-current', content.share_image_url ? 'Thumbnail tersimpan' : 'Belum ada thumbnail');
 };
 
 const login = async (button) => {
@@ -232,6 +231,7 @@ const saveInvitation = async (button) => {
             description: document.getElementById('invitation-description').value.trim(),
             timezone: document.getElementById('invitation-timezone').value.trim() || 'Asia/Jakarta',
             content: {
+                ...((invitation.content ?? {})),
                 welcome_title: document.getElementById('invitation-welcome-title').value.trim(),
                 groom_nickname: document.getElementById('invitation-groom-nickname').value.trim(),
                 bride_nickname: document.getElementById('invitation-bride-nickname').value.trim(),
@@ -251,12 +251,10 @@ const saveInvitation = async (button) => {
                 gift_owner: document.getElementById('invitation-gift-owner').value.trim(),
                 gift_phone: document.getElementById('invitation-gift-phone').value.trim(),
                 gift_address: document.getElementById('invitation-gift-address').value.trim(),
-                instagram_url: document.getElementById('invitation-instagram').value.trim(),
-                facebook_url: document.getElementById('invitation-facebook').value.trim(),
-                whatsapp_url: document.getElementById('invitation-whatsapp').value.trim(),
                 show_story: document.getElementById('invitation-show-story').checked,
                 show_qris: document.getElementById('invitation-show-qris').checked,
                 show_gift: document.getElementById('invitation-show-gift').checked,
+                share_description: document.getElementById('invitation-share-description').value.trim(),
             },
         };
         const groomPhoto = await uploadAsset(document.getElementById('invitation-groom-photo').files[0], session.user.id, 'groom');
@@ -265,6 +263,7 @@ const saveInvitation = async (button) => {
         const covers = await uploadAssets(document.getElementById('invitation-covers').files, session.user.id, 'cover');
         const gallery = await uploadAssets(document.getElementById('invitation-gallery').files, session.user.id, 'gallery');
         const qris = await uploadAsset(document.getElementById('invitation-qris').files[0], session.user.id, 'qris');
+        const shareImage = await uploadAsset(document.getElementById('invitation-share-image').files[0], session.user.id, 'share');
 
         if (groomPhoto) values.groom_photo_url = groomPhoto;
         if (bridePhoto) values.bride_photo_url = bridePhoto;
@@ -272,6 +271,7 @@ const saveInvitation = async (button) => {
         if (covers.length) values.cover_urls = covers;
         if (gallery.length) values.gallery_urls = gallery;
         if (qris) values.content.qris_url = qris;
+        if (shareImage) values.content.share_image_url = shareImage;
 
         await updateInvitation(invitation.id, values);
         loadForm({ ...invitation, ...values }, session.user.email);
@@ -292,12 +292,12 @@ const deleteAsset = async (field, button) => {
     try {
         const invitation = await getInvitation(session.user.id);
         const content = { ...(invitation.content ?? {}) };
-        const current = field === 'qris_url' ? content.qris_url : invitation[field];
+        const current = field === 'qris_url' || field === 'share_image_url' ? content[field] : invitation[field];
         const urls = Array.isArray(current) ? current : [current];
         await removeStorageFiles(urls);
 
-        const values = field === 'qris_url'
-            ? { content: { ...content, qris_url: '' } }
+        const values = field === 'qris_url' || field === 'share_image_url'
+            ? { content: { ...content, [field]: '' } }
             : { [field]: Array.isArray(current) ? [] : '' };
         await updateInvitation(invitation.id, values);
         loadForm({ ...invitation, ...values, content: values.content ?? invitation.content }, session.user.email);

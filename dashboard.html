@@ -294,6 +294,16 @@
                                 <label for="invitation-description" class="form-label small">Description</label>
                                 <textarea class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-description" rows="2"></textarea>
                             </div>
+                            <div class="mb-2">
+                                <label for="invitation-share-description" class="form-label small">Share description</label>
+                                <textarea class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-share-description" rows="2" placeholder="Deskripsi yang tampil saat link dibagikan"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="invitation-share-image" class="form-label small">Share thumbnail</label>
+                                <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-share-image" accept="image/*">
+                                <small id="invitation-share-image-current" class="text-secondary"></small>
+                                <button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('share_image_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus thumbnail</button>
+                            </div>
                             <hr>
                             <p class="fw-bold mb-2">Cover and couple</p>
                             <div class="mb-2">
@@ -342,11 +352,6 @@
                             </div>
                             <div class="mb-2"><label for="invitation-qris" class="form-label small">QRIS image</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-qris" accept="image/*"><small id="invitation-qris-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('qris_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus QRIS</button></div>
                             <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="invitation-show-qris" checked><label class="form-check-label" for="invitation-show-qris">Show QRIS</label></div>
-                            <hr>
-                            <p class="fw-bold mb-2">Social links</p>
-                            <div class="mb-2"><label for="invitation-instagram" class="form-label small">Instagram URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-instagram" placeholder="https://instagram.com/username"></div>
-                            <div class="mb-2"><label for="invitation-facebook" class="form-label small">Facebook URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-facebook" placeholder="https://facebook.com/username"></div>
-                            <div class="mb-2"><label for="invitation-whatsapp" class="form-label small">WhatsApp URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-whatsapp" placeholder="https://wa.me/628123456789"></div>
                             <div class="mb-2">
                                 <label for="invitation-timezone" class="form-label small">Timezone</label>
                                 <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-timezone" value="Asia/Jakarta">
