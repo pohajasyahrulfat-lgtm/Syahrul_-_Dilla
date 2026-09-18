@@ -222,6 +222,10 @@ const saveInvitation = async (button) => {
             throw new Error('Data undangan belum dibuat di tabel invitations.');
         }
 
+        const shareDescription = document.getElementById('invitation-share-description')?.value.trim()
+            || invitation.description;
+        const shareImageInput = document.getElementById('invitation-share-image');
+
         const values = {
             slug: document.getElementById('invitation-slug').value.trim(),
             groom_name: document.getElementById('invitation-groom-name').value.trim(),
@@ -254,7 +258,7 @@ const saveInvitation = async (button) => {
                 show_story: document.getElementById('invitation-show-story').checked,
                 show_qris: document.getElementById('invitation-show-qris').checked,
                 show_gift: document.getElementById('invitation-show-gift').checked,
-                share_description: document.getElementById('invitation-share-description').value.trim(),
+                share_description: shareDescription,
             },
         };
         const groomPhoto = await uploadAsset(document.getElementById('invitation-groom-photo').files[0], session.user.id, 'groom');
@@ -263,7 +267,7 @@ const saveInvitation = async (button) => {
         const covers = await uploadAssets(document.getElementById('invitation-covers').files, session.user.id, 'cover');
         const gallery = await uploadAssets(document.getElementById('invitation-gallery').files, session.user.id, 'gallery');
         const qris = await uploadAsset(document.getElementById('invitation-qris').files[0], session.user.id, 'qris');
-        const shareImage = await uploadAsset(document.getElementById('invitation-share-image').files[0], session.user.id, 'share');
+        const shareImage = await uploadAsset(shareImageInput?.files[0], session.user.id, 'share');
 
         if (groomPhoto) values.groom_photo_url = groomPhoto;
         if (bridePhoto) values.bride_photo_url = bridePhoto;
