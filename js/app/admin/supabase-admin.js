@@ -117,6 +117,25 @@ const uploadAsset = async (file, ownerId, type) => {
 
 const uploadAssets = async (files, ownerId, type) => Promise.all(Array.from(files ?? []).map((file) => uploadAsset(file, ownerId, type)));
 
+const storagePath = (url) => {
+    const marker = '/storage/v1/object/public/invitation-assets/';
+    return url?.includes(marker) ? url.split(marker)[1] : null;
+};
+
+const removeStorageFiles = async (urls) => {
+    const prefixes = urls.map(storagePath).filter(Boolean);
+    if (!prefixes.length) return;
+
+    const response = await request('/storage/v1/object/remove', {
+        method: 'POST',
+        headers: tokenHeaders(),
+        body: JSON.stringify({ prefixes }),
+    });
+    if (!response.ok) {
+        throw new Error(`Penghapusan file gagal (HTTP ${response.status}).`);
+    }
+};
+
 const loadForm = (invitation, email) => {
     const content = invitation.content ?? {};
     setText('dashboard-email', email);
@@ -257,6 +276,33 @@ const saveInvitation = async (button) => {
     }
 };
 
+const deleteAsset = async (field, button) => {
+    if (!window.confirm('Hapus media ini dari undangan?')) return;
+
+    const session = getSession();
+    if (!session?.user?.id) return;
+    button.disabled = true;
+
+    try {
+        const invitation = await getInvitation(session.user.id);
+        const content = { ...(invitation.content ?? {}) };
+        const current = field === 'qris_url' ? content.qris_url : invitation[field];
+        const urls = Array.isArray(current) ? current : [current];
+        await removeStorageFiles(urls);
+
+        const values = field === 'qris_url'
+            ? { content: { ...content, qris_url: '' } }
+            : { [field]: Array.isArray(current) ? [] : '' };
+        await updateInvitation(invitation.id, values);
+        loadForm({ ...invitation, ...values, content: values.content ?? invitation.content }, session.user.email);
+        notify('Media berhasil dihapus.');
+    } catch (error) {
+        notify(error.message, 'warning');
+    } finally {
+        button.disabled = false;
+    }
+};
+
 const logout = () => {
     clearSession();
     window.location.reload();
@@ -295,6 +341,7 @@ const init = () => {
             auth: { login },
             logout,
             saveInvitation,
+            deleteAsset,
             changeName: saveInvitation,
             enableButtonName: () => {},
             enableButtonPassword: () => {},

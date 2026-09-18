@@ -41,7 +41,7 @@
 
     <!-- Dependencies JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha256-5P1JGBOIxI7FBAvT/mb1fCnI5n/NhQKzNUuW7Hq0fMc=" crossorigin="anonymous"></script>
-    <script defer src="./dist/admin.js?v=20260918-nickname-child-order"></script>
+    <script defer src="./dist/admin.js?v=20260918-media-delete"></script>
 </head>
 
 <!-- <html lang="en" data-bs-theme="auto"> ['auto', 'dark', 'light'] -->
@@ -312,7 +312,7 @@
                                 <div class="col-md-6 mb-2"><label for="invitation-groom-parents" class="form-label small">Groom parents</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-groom-parents"></div>
                                 <div class="col-md-6 mb-2"><label for="invitation-bride-parents" class="form-label small">Bride parents</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-bride-parents"></div>
                             </div>
-                            <div class="mb-2"><label for="invitation-covers" class="form-label small">Cover slide images</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-covers" accept="image/*" multiple><small id="invitation-cover-current" class="text-secondary"></small></div>
+                            <div class="mb-2"><label for="invitation-covers" class="form-label small">Cover slide images</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-covers" accept="image/*" multiple><small id="invitation-cover-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('cover_urls', this)"><i class="fa-solid fa-trash me-1"></i>Hapus cover</button></div>
                             <hr>
                             <p class="fw-bold mb-2">Akad, resepsi, and maps</p>
                             <div class="row">
@@ -327,7 +327,7 @@
                             <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="invitation-show-story" checked><label class="form-check-label" for="invitation-show-story">Show love story</label></div>
                             <div class="mb-2"><label for="invitation-story-description" class="form-label small">Love story description</label><textarea class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-story-description" rows="4"></textarea></div>
                             <div class="mb-2"><label for="invitation-story-video-url" class="form-label small">Love story video URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-story-video-url"></div>
-                            <div class="mb-2"><label for="invitation-gallery" class="form-label small">Gallery images</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gallery" accept="image/*" multiple><small id="invitation-gallery-current" class="text-secondary"></small></div>
+                            <div class="mb-2"><label for="invitation-gallery" class="form-label small">Gallery images</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gallery" accept="image/*" multiple><small id="invitation-gallery-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('gallery_urls', this)"><i class="fa-solid fa-trash me-1"></i>Hapus galeri</button></div>
                             <hr>
                             <p class="fw-bold mb-2">Love gift</p>
                             <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="invitation-show-gift" checked><label class="form-check-label" for="invitation-show-gift">Show love gift</label></div>
@@ -340,7 +340,7 @@
                                 <div class="col-md-6 mb-2"><label for="invitation-gift-phone" class="form-label small">Gift phone</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-phone"></div>
                                 <div class="col-md-6 mb-2"><label for="invitation-gift-address" class="form-label small">Gift address</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-address"></div>
                             </div>
-                            <div class="mb-2"><label for="invitation-qris" class="form-label small">QRIS image</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-qris" accept="image/*"><small id="invitation-qris-current" class="text-secondary"></small></div>
+                            <div class="mb-2"><label for="invitation-qris" class="form-label small">QRIS image</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-qris" accept="image/*"><small id="invitation-qris-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('qris_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus QRIS</button></div>
                             <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="invitation-show-qris" checked><label class="form-check-label" for="invitation-show-qris">Show QRIS</label></div>
                             <div class="mb-2">
                                 <label for="invitation-timezone" class="form-label small">Timezone</label>
@@ -349,17 +349,17 @@
                             <div class="mb-2">
                                 <label for="invitation-groom-photo" class="form-label small">Groom photo</label>
                                 <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-groom-photo" accept="image/*">
-                                <small id="invitation-groom-photo-current" class="text-secondary"></small>
+                                <small id="invitation-groom-photo-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('groom_photo_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus foto</button>
                             </div>
                             <div class="mb-2">
                                 <label for="invitation-bride-photo" class="form-label small">Bride photo</label>
                                 <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-bride-photo" accept="image/*">
-                                <small id="invitation-bride-photo-current" class="text-secondary"></small>
+                                <small id="invitation-bride-photo-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('bride_photo_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus foto</button>
                             </div>
                             <div class="mb-3">
                                 <label for="invitation-audio" class="form-label small">Music</label>
                                 <input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-audio" accept="audio/*">
-                                <small id="invitation-audio-current" class="text-secondary"></small>
+                                <small id="invitation-audio-current" class="text-secondary"></small><button type="button" class="btn btn-sm btn-outline-danger rounded-4 mt-1" onclick="undangan.admin.deleteAsset('audio_url', this)"><i class="fa-solid fa-trash me-1"></i>Hapus musik</button>
                             </div>
                             <div class="d-flex justify-content-end">
                                 <button type="button" class="btn btn-sm btn-primary rounded-4 shadow-sm" onclick="undangan.admin.saveInvitation(this)">Save invitation</button>

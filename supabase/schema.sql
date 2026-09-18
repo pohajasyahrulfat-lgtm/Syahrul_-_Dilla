@@ -175,3 +175,9 @@ for update to authenticated using (
 with check (
     bucket_id = 'invitation-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
 );
+
+drop policy if exists invitation_assets_owner_delete on storage.objects;
+create policy invitation_assets_owner_delete on storage.objects
+for delete to authenticated using (
+    bucket_id = 'invitation-assets' and (storage.foldername(name))[1] = (select auth.uid())::text
+);
