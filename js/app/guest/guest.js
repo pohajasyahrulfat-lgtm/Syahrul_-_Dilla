@@ -67,6 +67,8 @@ export const guest = (() => {
             setText('[data-invitation-welcome-title]', content.welcome_title);
             setText('[data-invitation-groom-nickname]', content.groom_nickname);
             setText('[data-invitation-bride-nickname]', content.bride_nickname);
+            setText('[data-invitation-groom-child-order]', content.groom_child_order);
+            setText('[data-invitation-bride-child-order]', content.bride_child_order);
             setText('[data-invitation-groom-parents]', content.groom_parents);
             setText('[data-invitation-bride-parents]', content.bride_parents);
             setText('[data-invitation-description]', invitation.description);

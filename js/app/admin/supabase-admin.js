@@ -136,6 +136,8 @@ const loadForm = (invitation, email) => {
     setValue('invitation-welcome-title', content.welcome_title);
     setValue('invitation-groom-nickname', content.groom_nickname);
     setValue('invitation-bride-nickname', content.bride_nickname);
+    setValue('invitation-groom-child-order', content.groom_child_order);
+    setValue('invitation-bride-child-order', content.bride_child_order);
     setValue('invitation-groom-parents', content.groom_parents);
     setValue('invitation-bride-parents', content.bride_parents);
     setValue('invitation-akad-date', content.akad_date);
@@ -211,6 +213,8 @@ const saveInvitation = async (button) => {
                 welcome_title: document.getElementById('invitation-welcome-title').value.trim(),
                 groom_nickname: document.getElementById('invitation-groom-nickname').value.trim(),
                 bride_nickname: document.getElementById('invitation-bride-nickname').value.trim(),
+                groom_child_order: document.getElementById('invitation-groom-child-order').value.trim(),
+                bride_child_order: document.getElementById('invitation-bride-child-order').value.trim(),
                 groom_parents: document.getElementById('invitation-groom-parents').value.trim(),
                 bride_parents: document.getElementById('invitation-bride-parents').value.trim(),
                 akad_date: document.getElementById('invitation-akad-date').value,
