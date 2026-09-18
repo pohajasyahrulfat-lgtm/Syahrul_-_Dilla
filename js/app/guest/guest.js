@@ -84,6 +84,18 @@ export const guest = (() => {
             setText('[data-invitation-gift-owner]', content.gift_owner);
             setText('[data-invitation-gift-phone]', content.gift_phone);
             setText('[data-invitation-gift-address]', content.gift_address);
+            const socialLinks = {
+                instagram: content.instagram_url,
+                facebook: content.facebook_url,
+                whatsapp: content.whatsapp_url,
+            };
+            Object.entries(socialLinks).forEach(([name, url]) => {
+                const item = document.querySelector(`[data-invitation-social="${name}"]`);
+                if (item) {
+                    item.classList.toggle('d-none', !url);
+                    if (url) item.querySelector('a').href = url;
+                }
+            });
             const qris = document.querySelector('[data-invitation-qris]');
             if (qris && content.qris_url) qris.dataset.src = content.qris_url;
             setText('[data-invitation-location]', invitation.location);

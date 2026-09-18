@@ -171,6 +171,9 @@ const loadForm = (invitation, email) => {
     setValue('invitation-gift-owner', content.gift_owner);
     setValue('invitation-gift-phone', content.gift_phone);
     setValue('invitation-gift-address', content.gift_address);
+    setValue('invitation-instagram', content.instagram_url);
+    setValue('invitation-facebook', content.facebook_url);
+    setValue('invitation-whatsapp', content.whatsapp_url);
     const setChecked = (id, value) => {
         const element = document.getElementById(id);
         if (element) element.checked = value !== false;
@@ -248,6 +251,9 @@ const saveInvitation = async (button) => {
                 gift_owner: document.getElementById('invitation-gift-owner').value.trim(),
                 gift_phone: document.getElementById('invitation-gift-phone').value.trim(),
                 gift_address: document.getElementById('invitation-gift-address').value.trim(),
+                instagram_url: document.getElementById('invitation-instagram').value.trim(),
+                facebook_url: document.getElementById('invitation-facebook').value.trim(),
+                whatsapp_url: document.getElementById('invitation-whatsapp').value.trim(),
                 show_story: document.getElementById('invitation-show-story').checked,
                 show_qris: document.getElementById('invitation-show-qris').checked,
                 show_gift: document.getElementById('invitation-show-gift').checked,
