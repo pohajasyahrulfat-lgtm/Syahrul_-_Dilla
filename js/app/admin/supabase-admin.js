@@ -126,8 +126,8 @@ const removeStorageFiles = async (urls) => {
     const prefixes = urls.map(storagePath).filter(Boolean);
     if (!prefixes.length) return;
 
-    const response = await request('/storage/v1/object/invitation-assets/remove', {
-        method: 'POST',
+    const response = await request('/storage/v1/object/invitation-assets', {
+        method: 'DELETE',
         headers: tokenHeaders(),
         body: JSON.stringify({ prefixes }),
     });
