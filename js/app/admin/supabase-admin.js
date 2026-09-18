@@ -26,6 +26,25 @@ const saveSession = (session) => localStorage.setItem(SESSION_KEY, JSON.stringif
 const clearSession = () => localStorage.removeItem(SESSION_KEY);
 const tokenHeaders = () => ({ Authorization: `Bearer ${getSession()?.access_token ?? ''}` });
 
+const refreshSession = async () => {
+    const refreshToken = getSession()?.refresh_token;
+    if (!refreshToken) {
+        return false;
+    }
+
+    const response = await request('/auth/v1/token?grant_type=refresh_token', {
+        method: 'POST',
+        body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+    if (!response.ok) {
+        clearSession();
+        return false;
+    }
+
+    saveSession(await response.json());
+    return true;
+};
+
 const notify = (message, type = 'success') => {
     if (window.undangan?.util?.notify) {
         window.undangan.util.notify(message)[type]();
@@ -55,9 +74,12 @@ const getInvitation = async (ownerId) => {
         owner_id: `eq.${ownerId}`,
         limit: '1',
     });
-    const response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
+    let response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
+    if (response.status === 401 && await refreshSession()) {
+        response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
+    }
     if (!response.ok) {
-        throw new Error('Tidak dapat mengambil data undangan.');
+        throw new Error(`Tidak dapat mengambil data undangan (HTTP ${response.status}). Silakan login ulang jika sesi sudah kedaluwarsa.`);
     }
 
     return (await response.json())[0] ?? null;
