@@ -50,6 +50,13 @@ export const guest = (() => {
                 document.body.dataset.audio = invitation.audio_url;
             }
             const content = invitation.content ?? {};
+            const setVisibility = (name, visible) => {
+                const section = document.querySelector(`[data-invitation-section="${name}"]`);
+                if (section) section.classList.toggle('d-none', visible === false);
+            };
+            setVisibility('story', content.show_story);
+            setVisibility('qris', content.show_qris);
+            setVisibility('gift', content.show_gift);
             const setText = (selector, value) => {
                 if (value) {
                     document.querySelectorAll(selector).forEach((element) => {
@@ -71,6 +78,10 @@ export const guest = (() => {
             setText('[data-invitation-gift-bank]', content.gift_bank_name);
             setText('[data-invitation-gift-account]', content.gift_account);
             setText('[data-invitation-gift-owner]', content.gift_owner);
+            setText('[data-invitation-gift-phone]', content.gift_phone);
+            setText('[data-invitation-gift-address]', content.gift_address);
+            const qris = document.querySelector('[data-invitation-qris]');
+            if (qris && content.qris_url) qris.dataset.src = content.qris_url;
             setText('[data-invitation-location]', invitation.location);
             const maps = document.querySelector('[data-invitation-maps]');
             if (maps && content.maps_url) {

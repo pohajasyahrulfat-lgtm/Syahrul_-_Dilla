@@ -41,7 +41,7 @@
 
     <!-- Dependencies JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha256-5P1JGBOIxI7FBAvT/mb1fCnI5n/NhQKzNUuW7Hq0fMc=" crossorigin="anonymous"></script>
-    <script defer src="./dist/admin.js?v=20260917-supabase"></script>
+    <script defer src="./dist/admin.js?v=20260918-content-controls"></script>
 </head>
 
 <!-- <html lang="en" data-bs-theme="auto"> ['auto', 'dark', 'light'] -->
@@ -320,16 +320,24 @@
                             <div class="mb-2"><label for="invitation-maps-url" class="form-label small">Google Maps URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-maps-url"></div>
                             <hr>
                             <p class="fw-bold mb-2">Love story and gallery</p>
+                            <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="invitation-show-story" checked><label class="form-check-label" for="invitation-show-story">Show love story</label></div>
                             <div class="mb-2"><label for="invitation-story-description" class="form-label small">Love story description</label><textarea class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-story-description" rows="4"></textarea></div>
                             <div class="mb-2"><label for="invitation-story-video-url" class="form-label small">Love story video URL</label><input type="url" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-story-video-url"></div>
                             <div class="mb-2"><label for="invitation-gallery" class="form-label small">Gallery images</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gallery" accept="image/*" multiple><small id="invitation-gallery-current" class="text-secondary"></small></div>
                             <hr>
                             <p class="fw-bold mb-2">Love gift</p>
+                            <div class="form-check form-switch mb-2"><input class="form-check-input" type="checkbox" id="invitation-show-gift" checked><label class="form-check-label" for="invitation-show-gift">Show love gift</label></div>
                             <div class="row">
                                 <div class="col-md-4 mb-2"><label for="invitation-gift-bank-name" class="form-label small">Bank</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-bank-name"></div>
                                 <div class="col-md-4 mb-2"><label for="invitation-gift-account" class="form-label small">Account number</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-account"></div>
                                 <div class="col-md-4 mb-2"><label for="invitation-gift-owner" class="form-label small">Account owner</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-owner"></div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2"><label for="invitation-gift-phone" class="form-label small">Gift phone</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-phone"></div>
+                                <div class="col-md-6 mb-2"><label for="invitation-gift-address" class="form-label small">Gift address</label><input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-gift-address"></div>
+                            </div>
+                            <div class="mb-2"><label for="invitation-qris" class="form-label small">QRIS image</label><input type="file" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-qris" accept="image/*"><small id="invitation-qris-current" class="text-secondary"></small></div>
+                            <div class="form-check form-switch mb-3"><input class="form-check-input" type="checkbox" id="invitation-show-qris" checked><label class="form-check-label" for="invitation-show-qris">Show QRIS</label></div>
                             <div class="mb-2">
                                 <label for="invitation-timezone" class="form-label small">Timezone</label>
                                 <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-timezone" value="Asia/Jakarta">

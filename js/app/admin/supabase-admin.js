@@ -126,8 +126,18 @@ const loadForm = (invitation, email) => {
     setValue('invitation-gift-bank-name', content.gift_bank_name);
     setValue('invitation-gift-account', content.gift_account);
     setValue('invitation-gift-owner', content.gift_owner);
+    setValue('invitation-gift-phone', content.gift_phone);
+    setValue('invitation-gift-address', content.gift_address);
+    const setChecked = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.checked = value !== false;
+    };
+    setChecked('invitation-show-story', content.show_story);
+    setChecked('invitation-show-qris', content.show_qris);
+    setChecked('invitation-show-gift', content.show_gift);
     setText('invitation-gallery-current', `${(invitation.gallery_urls ?? []).length} foto tersimpan`);
     setText('invitation-cover-current', `${(invitation.cover_urls ?? []).length} cover tersimpan`);
+    setText('invitation-qris-current', content.qris_url ? 'QRIS tersimpan' : 'Belum ada QRIS');
 };
 
 const login = async (button) => {
@@ -191,6 +201,11 @@ const saveInvitation = async (button) => {
                 gift_bank_name: document.getElementById('invitation-gift-bank-name').value.trim(),
                 gift_account: document.getElementById('invitation-gift-account').value.trim(),
                 gift_owner: document.getElementById('invitation-gift-owner').value.trim(),
+                gift_phone: document.getElementById('invitation-gift-phone').value.trim(),
+                gift_address: document.getElementById('invitation-gift-address').value.trim(),
+                show_story: document.getElementById('invitation-show-story').checked,
+                show_qris: document.getElementById('invitation-show-qris').checked,
+                show_gift: document.getElementById('invitation-show-gift').checked,
             },
         };
         const groomPhoto = await uploadAsset(document.getElementById('invitation-groom-photo').files[0], session.user.id, 'groom');
@@ -198,12 +213,14 @@ const saveInvitation = async (button) => {
         const audio = await uploadAsset(document.getElementById('invitation-audio').files[0], session.user.id, 'audio');
         const covers = await uploadAssets(document.getElementById('invitation-covers').files, session.user.id, 'cover');
         const gallery = await uploadAssets(document.getElementById('invitation-gallery').files, session.user.id, 'gallery');
+        const qris = await uploadAsset(document.getElementById('invitation-qris').files[0], session.user.id, 'qris');
 
         if (groomPhoto) values.groom_photo_url = groomPhoto;
         if (bridePhoto) values.bride_photo_url = bridePhoto;
         if (audio) values.audio_url = audio;
         if (covers.length) values.cover_urls = covers;
         if (gallery.length) values.gallery_urls = gallery;
+        if (qris) values.content.qris_url = qris;
 
         await updateInvitation(invitation.id, values);
         loadForm({ ...invitation, ...values }, session.user.email);

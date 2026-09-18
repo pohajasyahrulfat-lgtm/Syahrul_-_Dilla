@@ -63,7 +63,7 @@
 
     <!-- Dependencies JS -->
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha256-5P1JGBOIxI7FBAvT/mb1fCnI5n/NhQKzNUuW7Hq0fMc=" crossorigin="anonymous"></script>
-    <script src="./dist/guest.js?v=20260917-supabase-content-v3"></script>
+    <script src="./dist/guest.js?v=20260918-content-controls"></script>
 </head>
 
 <!-- Jika tidak menggunakan komentar, hapus atribut data-key dan data-url, serta abaikan file dashboard.html. -->
@@ -236,7 +236,7 @@
                 </section>
 
                 <!-- Love Story -->
-                <section class="bg-light-dark pt-2 pb-4">
+                <section class="bg-light-dark pt-2 pb-4" data-invitation-section="story">
                     <div class="container">
                         <div class="bg-theme-auto rounded-5 shadow p-3">
                             <h2 class="font-esthetic text-center py-2 mb-2" style="font-size: 2.125rem;">Kisah Cinta</h2>
@@ -460,12 +460,12 @@
                 </div>
 
                 <!-- Love Gift -->
-                <section class="bg-light-dark pb-3">
+                <section class="bg-light-dark pb-3" data-invitation-section="gift">
                     <div class="container text-center">
                         <h2 class="font-esthetic pt-3 mb-4" style="font-size: 2.25rem;">Love Gift</h2>
                         <p class="mb-1" style="font-size: 0.95rem;">Dengan hormat, bagi Anda yang ingin memberikan tanda kasih kepada kami, dapat melalui:</p>
 
-                        <div class="bg-theme-auto rounded-4 shadow p-3 mx-4 mt-4 text-start" data-aos="fade-up" data-aos-duration="2500">
+                        <div class="bg-theme-auto rounded-4 shadow p-3 mx-4 mt-4 text-start" data-invitation-section="qris" data-aos="fade-up" data-aos-duration="2500">
                             <i class="fa-solid fa-money-bill-transfer"></i>
                             <p class="d-inline">Transfer</p>
 
@@ -497,7 +497,7 @@
                             <div class="collapse" id="collapseQris">
                                 <hr class="my-2 py-1">
                                 <div class="d-flex justify-content-center align-items-center">
-                                    <img src="./assets/images/placeholder.webp" data-src="./assets/images/donate.png" alt="donate" class="img-fluid rounded-3 mx-auto bg-white">
+                                    <img src="./assets/images/placeholder.webp" data-src="./assets/images/donate.png" data-invitation-qris alt="donate" class="img-fluid rounded-3 mx-auto bg-white">
                                 </div>
                             </div>
                         </div>
@@ -507,19 +507,19 @@
                             <p class="d-inline">Gift</p>
 
                             <div class="d-flex justify-content-between align-items-center mt-2">
-                                <p class="m-0 p-0" style="font-size: 0.95rem;"><i class="fa-regular fa-user fa-sm me-1"></i>Wahyu Siapa?</p>
+                                <p class="m-0 p-0" style="font-size: 0.95rem;"><i class="fa-regular fa-user fa-sm me-1"></i><span data-invitation-gift-owner>Wahyu Siapa?</span></p>
                                 <button class="btn btn-outline-auto btn-sm shadow-sm rounded-4 py-0" style="font-size: 0.75rem;" data-bs-toggle="collapse" data-bs-target="#collapseGift"><i class="fa-solid fa-circle-info fa-sm me-1"></i>Info</button>
                             </div>
 
                             <div class="collapse" id="collapseGift">
                                 <hr class="my-2 py-1">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <p class="m-0 p-0" style="font-size: 0.85rem;"><i class="fa-solid fa-phone-volume me-1"></i>0812345678</p>
+                                    <p class="m-0 p-0" style="font-size: 0.85rem;"><i class="fa-solid fa-phone-volume me-1"></i><span data-invitation-gift-phone>0812345678</span></p>
                                     <!-- Ubah juga data-copy sesuai dengan no hp -->
                                     <button class="btn btn-outline-auto btn-sm shadow-sm rounded-4 py-0" style="font-size: 0.75rem;" data-copy="0812345678" onclick="undangan.util.copy(this)"><i class="fa-solid fa-copy"></i></button>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <p class="my-0 p-0 text-truncate me-2" style="font-size: 0.85rem;"><i class="fa-solid fa-location-dot me-1"></i>RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191.</p>
+                                    <p class="my-0 p-0 text-truncate me-2" style="font-size: 0.85rem;"><i class="fa-solid fa-location-dot me-1"></i><span data-invitation-gift-address>RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191.</span></p>
                                     <!-- Ubah juga data-copy sesuai dengan alamat -->
                                     <button class="btn btn-outline-auto btn-sm shadow-sm rounded-4 py-0" style="font-size: 0.75rem;" data-copy="RT 10 RW 02, Desa Pajerukan, Kec. Kalibagor, Kab. Banyumas, Jawa Tengah 53191." onclick="undangan.util.copy(this)"><i class="fa-solid fa-copy"></i></button>
                                 </div>
