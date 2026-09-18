@@ -222,52 +222,54 @@ const saveInvitation = async (button) => {
             throw new Error('Data undangan belum dibuat di tabel invitations.');
         }
 
-        const shareDescription = document.getElementById('invitation-share-description')?.value.trim()
+        const readValue = (id, fallback = '') => document.getElementById(id)?.value.trim() ?? fallback;
+        const readChecked = (id, fallback = false) => document.getElementById(id)?.checked ?? fallback;
+        const readFiles = (id) => document.getElementById(id)?.files ?? [];
+        const shareDescription = readValue('invitation-share-description', invitation.description)
             || invitation.description;
-        const shareImageInput = document.getElementById('invitation-share-image');
 
         const values = {
-            slug: document.getElementById('invitation-slug').value.trim(),
-            groom_name: document.getElementById('invitation-groom-name').value.trim(),
-            bride_name: document.getElementById('invitation-bride-name').value.trim(),
-            event_date: document.getElementById('invitation-date').value || null,
-            location: document.getElementById('invitation-location').value.trim(),
-            description: document.getElementById('invitation-description').value.trim(),
-            timezone: document.getElementById('invitation-timezone').value.trim() || 'Asia/Jakarta',
+            slug: readValue('invitation-slug', invitation.slug),
+            groom_name: readValue('invitation-groom-name', invitation.groom_name),
+            bride_name: readValue('invitation-bride-name', invitation.bride_name),
+            event_date: readValue('invitation-date') || null,
+            location: readValue('invitation-location', invitation.location),
+            description: readValue('invitation-description', invitation.description),
+            timezone: readValue('invitation-timezone', invitation.timezone || 'Asia/Jakarta'),
             content: {
                 ...((invitation.content ?? {})),
-                welcome_title: document.getElementById('invitation-welcome-title').value.trim(),
-                groom_nickname: document.getElementById('invitation-groom-nickname').value.trim(),
-                bride_nickname: document.getElementById('invitation-bride-nickname').value.trim(),
-                groom_child_order: document.getElementById('invitation-groom-child-order').value.trim(),
-                bride_child_order: document.getElementById('invitation-bride-child-order').value.trim(),
-                groom_parents: document.getElementById('invitation-groom-parents').value.trim(),
-                bride_parents: document.getElementById('invitation-bride-parents').value.trim(),
-                akad_date: document.getElementById('invitation-akad-date').value,
-                akad_time: document.getElementById('invitation-akad-time').value.trim(),
-                reception_date: document.getElementById('invitation-reception-date').value,
-                reception_time: document.getElementById('invitation-reception-time').value.trim(),
-                maps_url: document.getElementById('invitation-maps-url').value.trim(),
-                story_description: document.getElementById('invitation-story-description').value.trim(),
-                story_video_url: document.getElementById('invitation-story-video-url').value.trim(),
-                gift_bank_name: document.getElementById('invitation-gift-bank-name').value.trim(),
-                gift_account: document.getElementById('invitation-gift-account').value.trim(),
-                gift_owner: document.getElementById('invitation-gift-owner').value.trim(),
-                gift_phone: document.getElementById('invitation-gift-phone').value.trim(),
-                gift_address: document.getElementById('invitation-gift-address').value.trim(),
-                show_story: document.getElementById('invitation-show-story').checked,
-                show_qris: document.getElementById('invitation-show-qris').checked,
-                show_gift: document.getElementById('invitation-show-gift').checked,
+                welcome_title: readValue('invitation-welcome-title'),
+                groom_nickname: readValue('invitation-groom-nickname'),
+                bride_nickname: readValue('invitation-bride-nickname'),
+                groom_child_order: readValue('invitation-groom-child-order'),
+                bride_child_order: readValue('invitation-bride-child-order'),
+                groom_parents: readValue('invitation-groom-parents'),
+                bride_parents: readValue('invitation-bride-parents'),
+                akad_date: readValue('invitation-akad-date'),
+                akad_time: readValue('invitation-akad-time'),
+                reception_date: readValue('invitation-reception-date'),
+                reception_time: readValue('invitation-reception-time'),
+                maps_url: readValue('invitation-maps-url'),
+                story_description: readValue('invitation-story-description'),
+                story_video_url: readValue('invitation-story-video-url'),
+                gift_bank_name: readValue('invitation-gift-bank-name'),
+                gift_account: readValue('invitation-gift-account'),
+                gift_owner: readValue('invitation-gift-owner'),
+                gift_phone: readValue('invitation-gift-phone'),
+                gift_address: readValue('invitation-gift-address'),
+                show_story: readChecked('invitation-show-story', true),
+                show_qris: readChecked('invitation-show-qris', true),
+                show_gift: readChecked('invitation-show-gift', true),
                 share_description: shareDescription,
             },
         };
-        const groomPhoto = await uploadAsset(document.getElementById('invitation-groom-photo').files[0], session.user.id, 'groom');
-        const bridePhoto = await uploadAsset(document.getElementById('invitation-bride-photo').files[0], session.user.id, 'bride');
-        const audio = await uploadAsset(document.getElementById('invitation-audio').files[0], session.user.id, 'audio');
-        const covers = await uploadAssets(document.getElementById('invitation-covers').files, session.user.id, 'cover');
-        const gallery = await uploadAssets(document.getElementById('invitation-gallery').files, session.user.id, 'gallery');
-        const qris = await uploadAsset(document.getElementById('invitation-qris').files[0], session.user.id, 'qris');
-        const shareImage = await uploadAsset(shareImageInput?.files[0], session.user.id, 'share');
+        const groomPhoto = await uploadAsset(readFiles('invitation-groom-photo')[0], session.user.id, 'groom');
+        const bridePhoto = await uploadAsset(readFiles('invitation-bride-photo')[0], session.user.id, 'bride');
+        const audio = await uploadAsset(readFiles('invitation-audio')[0], session.user.id, 'audio');
+        const covers = await uploadAssets(readFiles('invitation-covers'), session.user.id, 'cover');
+        const gallery = await uploadAssets(readFiles('invitation-gallery'), session.user.id, 'gallery');
+        const qris = await uploadAsset(readFiles('invitation-qris')[0], session.user.id, 'qris');
+        const shareImage = await uploadAsset(readFiles('invitation-share-image')[0], session.user.id, 'share');
 
         if (groomPhoto) values.groom_photo_url = groomPhoto;
         if (bridePhoto) values.bride_photo_url = bridePhoto;
