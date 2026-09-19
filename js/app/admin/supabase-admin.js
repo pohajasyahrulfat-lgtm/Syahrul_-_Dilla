@@ -72,12 +72,11 @@ const setText = (id, value) => {
 
 const currentInvitationState = { id: null, list: [], draft: false };
 
-const setShareUrl = (slug, guestName = document.getElementById('invitation-guest-name')?.value ?? '') => {
+const setShareUrl = (slug) => {
     const input = document.getElementById('invitation-share-url');
     const button = document.getElementById('invitation-share-copy');
     const params = new URLSearchParams();
     if (slug) params.set('slug', slug);
-    if (guestName.trim()) params.set('to', guestName.trim());
     if (slug) params.set('v', Date.now());
     const shareUrl = slug
         ? `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?${params.toString()}`
@@ -89,8 +88,6 @@ const setShareUrl = (slug, guestName = document.getElementById('invitation-guest
         button.setAttribute('data-copy', shareUrl);
     }
 };
-
-const updateShareLink = () => setShareUrl(document.getElementById('invitation-slug')?.value.trim() ?? '');
 
 const getInvitations = async (ownerId) => {
     const query = new URLSearchParams({
@@ -593,7 +590,6 @@ const init = () => {
             saveInvitation,
             deleteAsset,
             createInvitation,
-            updateShareLink,
         },
     };
 };
