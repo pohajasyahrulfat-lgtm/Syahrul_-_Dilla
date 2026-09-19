@@ -1,3 +1,5 @@
+import { navbar } from './navbar.js';
+
 const SUPABASE_URL = 'https://hotizjscshmmabyojhhx.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_7lwxKeKavEOl8vS-syIqEQ_-NCebh-a';
 const API_HEADERS = {
@@ -578,6 +580,7 @@ const init = () => {
         util: window.undangan?.util,
         theme: window.undangan?.theme,
         admin: {
+            navbar,
             auth: { login },
             logout,
             saveInvitation,
