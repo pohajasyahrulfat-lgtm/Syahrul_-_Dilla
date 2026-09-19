@@ -193,16 +193,7 @@ export const guest = (() => {
      * @returns {void}
      */
     const showGuestName = () => {
-        /**
-         * Make sure "to=" is the last query string.
-         * Ex. ulems.my.id/?id=some-uuid-here&to=name
-         */
-        const raw = window.location.search.split('to=');
-        let name = null;
-
-        if (raw.length > 1 && raw[1].length >= 1) {
-            name = window.decodeURIComponent(raw[1]);
-        }
+        const name = new URLSearchParams(window.location.search).get('to')?.trim() || null;
 
         if (name) {
             const guestName = document.getElementById('guest-name');
