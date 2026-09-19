@@ -68,12 +68,14 @@ const setText = (id, value) => {
     }
 };
 
-const currentInvitationState = { id: null, list: [] };
+const currentInvitationState = { id: null, list: [], draft: false };
 
 const setShareUrl = (slug) => {
     const input = document.getElementById('invitation-share-url');
     const button = document.getElementById('invitation-share-copy');
-    const shareUrl = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug ?? '')}&v=${Date.now()}`;
+    const shareUrl = slug
+        ? `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug)}&v=${Date.now()}`
+        : '';
     if (input) {
         input.value = shareUrl;
     }
@@ -145,6 +147,7 @@ const renderInvitationList = (invitations) => {
                         <span class="d-block text-secondary small">${invitation.slug || 'tanpa-slug'}</span>
                     </button>
                     <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-secondary" data-invitation-edit="${invitation.id}" aria-label="Edit undangan"><i class="fa-solid fa-pen"></i></button>
                         <button type="button" class="btn btn-outline-primary" data-invitation-copy="${invitation.id}" aria-label="Copy link undangan"><i class="fa-solid fa-copy"></i></button>
                         <button type="button" class="btn btn-outline-danger" data-invitation-delete="${invitation.id}" aria-label="Hapus undangan"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -171,6 +174,18 @@ const bindInvitationList = () => {
                         loadForm(invitation, session.user.email);
                     }
                 }
+            }
+            return;
+        }
+
+        const editTrigger = event.target.closest('[data-invitation-edit]');
+        if (editTrigger) {
+            const id = Number(editTrigger.dataset.invitationEdit);
+            const session = getSession();
+            const invitation = currentInvitationState.list.find((item) => item.id === id) ?? null;
+            if (!Number.isNaN(id) && invitation && session?.user?.email) {
+                currentInvitationState.id = id;
+                loadForm(invitation, session.user.email);
             }
             return;
         }
@@ -219,7 +234,28 @@ const bindInvitationList = () => {
     };
 };
 
-const createInvitation = async () => {
+const clearInvitationForm = () => {
+    currentInvitationState.id = null;
+    currentInvitationState.draft = true;
+    document.querySelectorAll('[id^="invitation-"]').forEach((element) => {
+        if (element.type === 'checkbox') {
+            element.checked = true;
+        } else {
+            element.value = '';
+        }
+    });
+    setText('dashboard-name', 'Undangan baru');
+    setText('invitation-groom-photo-current', 'Belum ada foto');
+    setText('invitation-bride-photo-current', 'Belum ada foto');
+    setText('invitation-audio-current', 'Belum ada musik');
+    setText('invitation-gallery-current', 'Belum ada foto');
+    setText('invitation-cover-current', 'Belum ada cover');
+    setText('invitation-qris-current', 'Belum ada QRIS');
+    setText('invitation-share-image-current', 'Belum ada thumbnail');
+    setShareUrl('');
+};
+
+const createInvitation = () => {
     const session = getSession();
     if (!session?.user?.id) {
         clearSession();
@@ -227,42 +263,21 @@ const createInvitation = async () => {
         return;
     }
 
-    const slug = `undangan-${Date.now().toString().slice(-8)}`;
+    clearInvitationForm();
+    notify('Form undangan baru sudah dikosongkan. Isi data lalu tekan Save invitation.');
+};
+
+const insertInvitation = async (ownerId, values) => {
     const response = await request('/rest/v1/invitations', {
         method: 'POST',
         headers: { ...tokenHeaders(), Prefer: 'return=representation' },
-        body: JSON.stringify({
-            owner_id: session.user.id,
-            slug,
-            groom_name: 'Nama Pengantin Pria',
-            bride_name: 'Nama Pengantin Wanita',
-            description: 'Undangan baru',
-            location: '',
-            event_date: null,
-            timezone: 'Asia/Jakarta',
-            content: {
-                welcome_title: 'The Wedding Of',
-                show_story: true,
-                show_qris: true,
-                show_gift: true,
-                share_description: 'Undangan baru',
-            },
-            is_published: true,
-        }),
+        body: JSON.stringify({ owner_id: ownerId, is_published: true, ...values }),
     });
-
     if (!response.ok) {
         const message = await response.text();
         throw new Error(`Gagal membuat undangan baru: ${message || response.status}`);
     }
-
-    const created = (await response.json())[0];
-    const invitations = await getInvitations(session.user.id);
-    currentInvitationState.id = created.id ?? invitations[0]?.id ?? null;
-    renderInvitationList(invitations);
-    bindInvitationList();
-    loadForm(created, session.user.email);
-    notify('Undangan baru berhasil dibuat.');
+    return (await response.json())[0];
 };
 
 const updateInvitation = async (id, values) => {
@@ -318,6 +333,7 @@ const removeStorageFiles = async (urls) => {
 
 const loadForm = (invitation, email) => {
     currentInvitationState.id = invitation.id ?? currentInvitationState.id;
+    currentInvitationState.draft = false;
     const content = invitation.content ?? {};
     setText('dashboard-email', email);
     setText('dashboard-name', invitation.groom_name && invitation.bride_name
@@ -399,7 +415,18 @@ const saveInvitation = async (button) => {
 
     button.disabled = true;
     try {
-        const invitation = await getInvitation(session.user.id, currentInvitationState.id ?? undefined);
+        const invitation = currentInvitationState.draft
+            ? {
+                id: null,
+                slug: '',
+                groom_name: '',
+                bride_name: '',
+                description: '',
+                location: '',
+                timezone: 'Asia/Jakarta',
+                content: {},
+            }
+            : await getInvitation(session.user.id, currentInvitationState.id ?? undefined);
         if (!invitation) {
             throw new Error('Data undangan belum dibuat di tabel invitations.');
         }
@@ -445,6 +472,12 @@ const saveInvitation = async (button) => {
                 share_description: shareDescription,
             },
         };
+        if (!values.slug || !values.groom_name || !values.bride_name) {
+            throw new Error('Slug, nama pengantin pria, dan nama pengantin wanita wajib diisi.');
+        }
+        if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)) {
+            throw new Error('Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung.');
+        }
         const groomPhoto = await uploadAsset(readFiles('invitation-groom-photo')[0], session.user.id, 'groom');
         const bridePhoto = await uploadAsset(readFiles('invitation-bride-photo')[0], session.user.id, 'bride');
         const audio = await uploadAsset(readFiles('invitation-audio')[0], session.user.id, 'audio');
@@ -461,12 +494,16 @@ const saveInvitation = async (button) => {
         if (qris) values.content.qris_url = qris;
         if (shareImage) values.content.share_image_url = shareImage;
 
-        await updateInvitation(invitation.id, values);
+        const savedInvitation = currentInvitationState.draft
+            ? await insertInvitation(session.user.id, values)
+            : (await updateInvitation(invitation.id, values), { ...invitation, ...values });
         const invitations = await getInvitations(session.user.id);
-        const refreshedInvitation = invitations.find((item) => item.id === invitation.id) ?? { ...invitation, ...values };
-        currentInvitationState.id = refreshedInvitation.id ?? invitation.id;
+        const refreshedInvitation = invitations.find((item) => item.id === savedInvitation.id) ?? savedInvitation;
+        currentInvitationState.id = refreshedInvitation.id;
+        currentInvitationState.draft = false;
         renderInvitationList(invitations);
-        loadForm({ ...invitation, ...values }, session.user.email);
+        bindInvitationList();
+        loadForm(refreshedInvitation, session.user.email);
         notify('Data undangan berhasil disimpan.');
     } catch (error) {
         notify(error.message, 'warning');
