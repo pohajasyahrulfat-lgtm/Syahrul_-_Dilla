@@ -1,0 +1,4 @@
+project_id = "hotizjscshmmabyojhhx"
+
+[functions.share]
+verify_jwt = false

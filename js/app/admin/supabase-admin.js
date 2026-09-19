@@ -546,4 +546,8 @@ const init = () => {
             saveInvitation,
             deleteAsset,
             createInvitation,
+        },
+    };
+};
+
 export { init };

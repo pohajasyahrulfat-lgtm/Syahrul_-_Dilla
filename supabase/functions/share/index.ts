@@ -35,6 +35,13 @@ Deno.serve(async (request) => {
     const description = content.share_description || invitation.description || title;
     const image = content.share_image_url || invitation.cover_urls?.[0] || `${publicSite}/assets/images/thumbanil.png`;
     const invitationUrl = `${publicSite}/?slug=${encodeURIComponent(invitation.slug)}&v=${Date.now()}`;
+    const userAgent = request.headers.get('user-agent')?.toLowerCase() ?? '';
+    const isSocialCrawler = /whatsapp|facebookexternalhit|facebot|twitterbot|linkedinbot|slackbot|telegrambot|discordbot|googlebot|bingbot/.test(userAgent);
+
+    if (!isSocialCrawler) {
+        return Response.redirect(invitationUrl, 302);
+    }
+
     const safeTitle = escapeHtml(title);
     const safeDescription = escapeHtml(description);
     const safeImage = escapeHtml(image);
