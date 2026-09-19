@@ -319,6 +319,8 @@
                                     <input type="url" class="form-control rounded-start-4 shadow-sm" id="invitation-share-url" readonly>
                                     <button type="button" class="btn btn-outline-secondary rounded-end-4" id="invitation-share-copy" data-copy="" onclick="undangan.util.copy(this)" aria-label="Copy share link"><i class="fa-solid fa-copy"></i></button>
                                 </div>
+                                <label for="invitation-guest-name" class="form-label small mt-2">Nama tamu</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 shadow-sm" id="invitation-guest-name" placeholder="Contoh: Budi Santoso" oninput="undangan.admin.updateShareLink()">
                                 <small class="text-secondary">Gunakan link ini agar thumbnail tampil saat dibagikan.</small>
                             </div>
                             <hr>

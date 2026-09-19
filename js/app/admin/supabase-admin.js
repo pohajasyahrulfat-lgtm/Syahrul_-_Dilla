@@ -72,11 +72,15 @@ const setText = (id, value) => {
 
 const currentInvitationState = { id: null, list: [], draft: false };
 
-const setShareUrl = (slug) => {
+const setShareUrl = (slug, guestName = document.getElementById('invitation-guest-name')?.value ?? '') => {
     const input = document.getElementById('invitation-share-url');
     const button = document.getElementById('invitation-share-copy');
+    const params = new URLSearchParams();
+    if (slug) params.set('slug', slug);
+    if (guestName.trim()) params.set('to', guestName.trim());
+    if (slug) params.set('v', Date.now());
     const shareUrl = slug
-        ? `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug)}&v=${Date.now()}`
+        ? `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?${params.toString()}`
         : '';
     if (input) {
         input.value = shareUrl;
@@ -85,6 +89,8 @@ const setShareUrl = (slug) => {
         button.setAttribute('data-copy', shareUrl);
     }
 };
+
+const updateShareLink = () => setShareUrl(document.getElementById('invitation-slug')?.value.trim() ?? '');
 
 const getInvitations = async (ownerId) => {
     const query = new URLSearchParams({
@@ -342,6 +348,7 @@ const loadForm = (invitation, email) => {
         ? `${invitation.groom_name} & ${invitation.bride_name}`
         : invitation.slug);
     setValue('invitation-slug', invitation.slug);
+    setValue('invitation-guest-name', '');
     setShareUrl(invitation.slug);
     setValue('invitation-groom-name', invitation.groom_name);
     setValue('invitation-bride-name', invitation.bride_name);
@@ -586,6 +593,7 @@ const init = () => {
             saveInvitation,
             deleteAsset,
             createInvitation,
+            updateShareLink,
         },
     };
 };
