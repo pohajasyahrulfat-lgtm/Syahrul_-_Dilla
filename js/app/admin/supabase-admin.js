@@ -164,8 +164,8 @@ const bindInvitationList = () => {
     container.onclick = async (event) => {
         const target = event.target.closest('[data-invitation-select]');
         if (target) {
-            const id = Number(target.dataset.invitationSelect);
-            if (!Number.isNaN(id)) {
+            const id = target.dataset.invitationSelect;
+            if (id) {
                 currentInvitationState.id = id;
                 const session = getSession();
                 if (session?.user?.id) {
@@ -180,10 +180,10 @@ const bindInvitationList = () => {
 
         const editTrigger = event.target.closest('[data-invitation-edit]');
         if (editTrigger) {
-            const id = Number(editTrigger.dataset.invitationEdit);
+            const id = editTrigger.dataset.invitationEdit;
             const session = getSession();
-            const invitation = currentInvitationState.list.find((item) => item.id === id) ?? null;
-            if (!Number.isNaN(id) && invitation && session?.user?.email) {
+            const invitation = currentInvitationState.list.find((item) => String(item.id) === id) ?? null;
+            if (id && invitation && session?.user?.email) {
                 currentInvitationState.id = id;
                 loadForm(invitation, session.user.email);
             }
@@ -192,8 +192,8 @@ const bindInvitationList = () => {
 
         const copyTrigger = event.target.closest('[data-invitation-copy]');
         if (copyTrigger) {
-            const id = Number(copyTrigger.dataset.invitationCopy);
-            const invitation = currentInvitationState.list.find((item) => item.id === id) ?? null;
+            const id = copyTrigger.dataset.invitationCopy;
+            const invitation = currentInvitationState.list.find((item) => String(item.id) === id) ?? null;
             if (!invitation) return;
             const url = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(invitation.slug ?? '')}&v=${Date.now()}`;
             await navigator.clipboard.writeText(url);
@@ -203,8 +203,8 @@ const bindInvitationList = () => {
 
         const deleteTrigger = event.target.closest('[data-invitation-delete]');
         if (deleteTrigger) {
-            const id = Number(deleteTrigger.dataset.invitationDelete);
-            if (!Number.isNaN(id) && window.confirm('Hapus undangan ini? Data akan terhapus dari daftar dan link tidak bisa dipakai lagi.')) {
+            const id = deleteTrigger.dataset.invitationDelete;
+            if (id && window.confirm('Hapus undangan ini? Data akan terhapus dari daftar dan link tidak bisa dipakai lagi.')) {
                 try {
                     const response = await request(`/rest/v1/invitations?id=eq.${id}`, {
                         method: 'DELETE',
