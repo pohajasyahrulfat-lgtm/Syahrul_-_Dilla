@@ -27,9 +27,37 @@ export const guest = (() => {
             return;
         }
 
-        const indicators = urls.map((_, index) => `<button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="${index}" class="${index === 0 ? 'active' : ''}" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="Slide ${index + 1}"></button>`).join('');
-        const slides = urls.map((url, index) => `<div class="carousel-item ${index === 0 ? 'active' : ''}"><img src="./assets/images/placeholder.webp" data-src="${encodeURI(url)}" data-invitation-gallery="${index}" alt="Gallery image ${index + 1}" class="d-block img-fluid cursor-pointer" onclick="undangan.guest.modal(this)"></div>`).join('');
-        carousel.innerHTML = `<div class="carousel-indicators">${indicators}</div><div class="carousel-inner rounded-4">${slides}</div>${urls.length > 1 ? '<button class="carousel-control-prev" type="button" data-bs-target="#gallery-carousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#gallery-carousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button>' : ''}`;
+        carousel.replaceChildren();
+        const indicators = document.createElement('div');
+        indicators.className = 'carousel-indicators';
+        const inner = document.createElement('div');
+        inner.className = 'carousel-inner rounded-4';
+        urls.forEach((url, index) => {
+            const indicator = document.createElement('button');
+            indicator.type = 'button';
+            indicator.dataset.bsTarget = '#gallery-carousel';
+            indicator.dataset.bsSlideTo = String(index);
+            indicator.className = index === 0 ? 'active' : '';
+            indicator.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+            indicator.setAttribute('aria-label', `Slide ${index + 1}`);
+            indicators.append(indicator);
+
+            const slide = document.createElement('div');
+            slide.className = `carousel-item${index === 0 ? ' active' : ''}`;
+            const image = document.createElement('img');
+            image.src = './assets/images/placeholder.webp';
+            image.dataset.src = url;
+            image.dataset.invitationGallery = String(index);
+            image.alt = `Gallery image ${index + 1}`;
+            image.className = 'd-block img-fluid cursor-pointer';
+            image.onclick = () => window.undangan.guest.modal(image);
+            slide.append(image);
+            inner.append(slide);
+        });
+        carousel.append(indicators, inner);
+        if (urls.length > 1) {
+            carousel.insertAdjacentHTML('beforeend', '<button class="carousel-control-prev" type="button" data-bs-target="#gallery-carousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#gallery-carousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button>');
+        }
         carousel.classList.remove('d-none');
     };
 
