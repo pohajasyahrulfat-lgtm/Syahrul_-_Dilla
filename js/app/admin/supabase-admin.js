@@ -219,6 +219,52 @@ const bindInvitationList = () => {
     };
 };
 
+const createInvitation = async () => {
+    const session = getSession();
+    if (!session?.user?.id) {
+        clearSession();
+        window.location.reload();
+        return;
+    }
+
+    const slug = `undangan-${Date.now().toString().slice(-8)}`;
+    const response = await request('/rest/v1/invitations', {
+        method: 'POST',
+        headers: { ...tokenHeaders(), Prefer: 'return=representation' },
+        body: JSON.stringify({
+            owner_id: session.user.id,
+            slug,
+            groom_name: 'Nama Pengantin Pria',
+            bride_name: 'Nama Pengantin Wanita',
+            description: 'Undangan baru',
+            location: '',
+            event_date: null,
+            timezone: 'Asia/Jakarta',
+            content: {
+                welcome_title: 'The Wedding Of',
+                show_story: true,
+                show_qris: true,
+                show_gift: true,
+                share_description: 'Undangan baru',
+            },
+            is_published: true,
+        }),
+    });
+
+    if (!response.ok) {
+        const message = await response.text();
+        throw new Error(`Gagal membuat undangan baru: ${message || response.status}`);
+    }
+
+    const created = (await response.json())[0];
+    const invitations = await getInvitations(session.user.id);
+    currentInvitationState.id = created.id ?? invitations[0]?.id ?? null;
+    renderInvitationList(invitations);
+    bindInvitationList();
+    loadForm(created, session.user.email);
+    notify('Undangan baru berhasil dibuat.');
+};
+
 const updateInvitation = async (id, values) => {
     const response = await request(`/rest/v1/invitations?id=eq.${id}`, {
         method: 'PATCH',
@@ -499,12 +545,5 @@ const init = () => {
             logout,
             saveInvitation,
             deleteAsset,
-            changeName: saveInvitation,
-            enableButtonName: () => {},
-            enableButtonPassword: () => {},
-            navbar: { buttonNavHome: () => {}, buttonNavSetting: () => {} },
-        },
-    };
-};
-
+            createInvitation,
 export { init };

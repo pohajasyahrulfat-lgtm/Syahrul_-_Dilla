@@ -269,7 +269,12 @@
                         <div class="p-3 bg-theme-auto mb-3 rounded-4 shadow">
                             <p class="mx-0 mt-0 mb-1 p-0 fw-bold"><i class="fa-solid fa-heart me-2"></i>Wedding Invitation</p>
                             <div class="mb-2">
-                                <label class="form-label small">Daftar undangan</label>
+                                <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                                    <label class="form-label small mb-0">Daftar undangan</label>
+                                    <button type="button" class="btn btn-sm btn-primary rounded-4 shadow-sm" onclick="undangan.admin.createInvitation()">
+                                        <i class="fa-solid fa-plus me-1"></i>Tambah undangan baru
+                                    </button>
+                                </div>
                                 <div id="invitation-list" class="list-group list-group-flush"></div>
                             </div>
                             <div class="mb-2">
