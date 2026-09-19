@@ -17,6 +17,22 @@ import { getInvitation } from '../../connection/supabase.js';
 
 export const guest = (() => {
 
+    const renderGallery = (galleryUrls) => {
+        const section = document.getElementById('gallery');
+        const carousel = document.getElementById('gallery-carousel');
+        const urls = (galleryUrls ?? []).filter((url) => typeof url === 'string' && url.trim());
+        if (!section || !carousel) return;
+        if (!urls.length) {
+            section.classList.add('d-none');
+            return;
+        }
+
+        const indicators = urls.map((_, index) => `<button type="button" data-bs-target="#gallery-carousel" data-bs-slide-to="${index}" class="${index === 0 ? 'active' : ''}" aria-current="${index === 0 ? 'true' : 'false'}" aria-label="Slide ${index + 1}"></button>`).join('');
+        const slides = urls.map((url, index) => `<div class="carousel-item ${index === 0 ? 'active' : ''}"><img src="./assets/images/placeholder.webp" data-src="${encodeURI(url)}" data-invitation-gallery="${index}" alt="Gallery image ${index + 1}" class="d-block img-fluid cursor-pointer" onclick="undangan.guest.modal(this)"></div>`).join('');
+        carousel.innerHTML = `<div class="carousel-indicators">${indicators}</div><div class="carousel-inner rounded-4">${slides}</div>${urls.length > 1 ? '<button class="carousel-control-prev" type="button" data-bs-target="#gallery-carousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button><button class="carousel-control-next" type="button" data-bs-target="#gallery-carousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button>' : ''}`;
+        carousel.classList.remove('d-none');
+    };
+
     /**
      * @returns {Promise<void>}
      */
@@ -120,12 +136,7 @@ export const guest = (() => {
                 }
             });
             const galleryUrls = invitation.gallery_urls ?? [];
-            document.querySelectorAll('[data-invitation-gallery]').forEach((element) => {
-                const url = galleryUrls[Number(element.dataset.invitationGallery)];
-                if (url) {
-                    element.dataset.src = url;
-                }
-            });
+            renderGallery(galleryUrls);
             const groomPhoto = document.querySelector('[data-invitation-photo="groom"]');
             const bridePhoto = document.querySelector('[data-invitation-photo="bride"]');
             if (invitation.groom_photo_url && groomPhoto) {
