@@ -33,8 +33,8 @@ Deno.serve(async (request) => {
     const content = invitation.content ?? {};
     const title = `${invitation.groom_name} & ${invitation.bride_name}`;
     const description = content.share_description || invitation.description || title;
-    const image = content.share_image_url || invitation.cover_urls?.[0] || `${publicSite}/assets/images/bg.webp`;
-    const invitationUrl = `${publicSite}/?slug=${encodeURIComponent(invitation.slug)}`;
+    const image = content.share_image_url || invitation.cover_urls?.[0] || `${publicSite}/assets/images/thumbanil.png`;
+    const invitationUrl = `${publicSite}/?slug=${encodeURIComponent(invitation.slug)}&v=${Date.now()}`;
     const safeTitle = escapeHtml(title);
     const safeDescription = escapeHtml(description);
     const safeImage = escapeHtml(image);
@@ -51,7 +51,11 @@ Deno.serve(async (request) => {
 <meta property="og:description" content="${safeDescription}">
 <meta property="og:image" content="${safeImage}">
 <meta property="og:image:secure_url" content="${safeImage}">
-<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="${safeImage}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="${safeInvitationUrl}">
 <meta http-equiv="refresh" content="0;url=${safeInvitationUrl}">

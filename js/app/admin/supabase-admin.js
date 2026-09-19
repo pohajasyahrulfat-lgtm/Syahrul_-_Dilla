@@ -71,7 +71,7 @@ const setText = (id, value) => {
 const setShareUrl = (slug) => {
     const input = document.getElementById('invitation-share-url');
     const button = document.getElementById('invitation-share-copy');
-    const shareUrl = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug ?? '')}`;
+    const shareUrl = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(slug ?? '')}&v=${Date.now()}`;
     if (input) {
         input.value = shareUrl;
     }

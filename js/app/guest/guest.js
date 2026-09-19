@@ -54,13 +54,18 @@ export const guest = (() => {
             const content = invitation.content ?? {};
             const shareTitle = `${invitation.groom_name} & ${invitation.bride_name}`;
             const shareDescription = content.share_description || invitation.description;
-            const shareImage = content.share_image_url || invitation.cover_urls?.[0];
+            const defaultShareImage = 'https://pohajasyahrulfat-lgtm.github.io/Syahrul_-_Dilla/assets/images/thumbanil.png';
+            const shareImage = content.share_image_url || invitation.cover_urls?.[0] || defaultShareImage;
             document.title = shareTitle;
             document.querySelector('meta[name="description"]')?.setAttribute('content', shareDescription);
             document.querySelector('meta[property="og:title"]')?.setAttribute('content', shareTitle);
             document.querySelector('meta[property="og:description"]')?.setAttribute('content', shareDescription);
-            document.querySelector('meta[property="og:image"]')?.setAttribute('content', shareImage || '');
-            document.querySelector('meta[property="og:image:secure_url"]')?.setAttribute('content', shareImage || '');
+            document.querySelector('meta[property="og:image"]')?.setAttribute('content', shareImage);
+            document.querySelector('meta[property="og:image:secure_url"]')?.setAttribute('content', shareImage);
+            document.querySelector('meta[property="og:image:width"]')?.setAttribute('content', '1200');
+            document.querySelector('meta[property="og:image:height"]')?.setAttribute('content', '630');
+            document.querySelector('meta[name="twitter:card"]')?.setAttribute('content', 'summary_large_image');
+            document.querySelector('meta[name="twitter:image"]')?.setAttribute('content', shareImage);
             const setVisibility = (name, visible) => {
                 const section = document.querySelector(`[data-invitation-section="${name}"]`);
                 if (section) section.classList.toggle('d-none', visible === false);
