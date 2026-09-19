@@ -68,6 +68,8 @@ const setText = (id, value) => {
     }
 };
 
+const currentInvitationState = { id: null, list: [] };
+
 const setShareUrl = (slug) => {
     const input = document.getElementById('invitation-share-url');
     const button = document.getElementById('invitation-share-copy');
@@ -80,11 +82,11 @@ const setShareUrl = (slug) => {
     }
 };
 
-const getInvitation = async (ownerId) => {
+const getInvitations = async (ownerId) => {
     const query = new URLSearchParams({
         select: '*',
         owner_id: `eq.${ownerId}`,
-        limit: '1',
+        order: 'created_at.desc',
     });
     let response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
     if (response.status === 401 && await refreshSession()) {
@@ -94,7 +96,127 @@ const getInvitation = async (ownerId) => {
         throw new Error(`Tidak dapat mengambil data undangan (HTTP ${response.status}). Silakan login ulang jika sesi sudah kedaluwarsa.`);
     }
 
-    return (await response.json())[0] ?? null;
+    return await response.json();
+};
+
+const getInvitation = async (ownerId, id = currentInvitationState.id) => {
+    const query = new URLSearchParams({
+        select: '*',
+        owner_id: `eq.${ownerId}`,
+    });
+    if (id) {
+        query.set('id', `eq.${id}`);
+    } else {
+        query.set('limit', '1');
+    }
+
+    let response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
+    if (response.status === 401 && await refreshSession()) {
+        response = await request(`/rest/v1/invitations?${query}`, { headers: tokenHeaders() });
+    }
+    if (!response.ok) {
+        throw new Error(`Tidak dapat mengambil data undangan (HTTP ${response.status}). Silakan login ulang jika sesi sudah kedaluwarsa.`);
+    }
+
+    const rows = await response.json();
+    return rows[0] ?? rows ?? null;
+};
+
+const renderInvitationList = (invitations) => {
+    currentInvitationState.list = invitations ?? [];
+    const container = document.getElementById('invitation-list');
+    if (!container) return;
+
+    if (!currentInvitationState.list.length) {
+        container.innerHTML = '<div class="text-secondary small">Belum ada undangan</div>';
+        return;
+    }
+
+    container.innerHTML = currentInvitationState.list.map((invitation) => {
+        const title = invitation.groom_name && invitation.bride_name
+            ? `${invitation.groom_name} & ${invitation.bride_name}`
+            : invitation.slug || 'Undangan baru';
+        const activeClass = currentInvitationState.id === invitation.id ? 'border-primary bg-primary-subtle' : 'border-light-subtle';
+        return `
+            <div class="list-group-item rounded-4 border ${activeClass} mb-2 p-2">
+                <div class="d-flex align-items-center justify-content-between gap-2">
+                    <button type="button" class="btn btn-link text-start p-0 text-decoration-none text-body-emphasis flex-grow-1" data-invitation-select="${invitation.id}">
+                        <span class="fw-semibold small">${title}</span>
+                        <span class="d-block text-secondary small">${invitation.slug || 'tanpa-slug'}</span>
+                    </button>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-outline-primary" data-invitation-copy="${invitation.id}" aria-label="Copy link undangan"><i class="fa-solid fa-copy"></i></button>
+                        <button type="button" class="btn btn-outline-danger" data-invitation-delete="${invitation.id}" aria-label="Hapus undangan"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+};
+
+const bindInvitationList = () => {
+    const container = document.getElementById('invitation-list');
+    if (!container) return;
+
+    container.onclick = async (event) => {
+        const target = event.target.closest('[data-invitation-select]');
+        if (target) {
+            const id = Number(target.dataset.invitationSelect);
+            if (!Number.isNaN(id)) {
+                currentInvitationState.id = id;
+                const session = getSession();
+                if (session?.user?.id) {
+                    const invitation = await getInvitation(session.user.id, id);
+                    if (invitation) {
+                        loadForm(invitation, session.user.email);
+                    }
+                }
+            }
+            return;
+        }
+
+        const copyTrigger = event.target.closest('[data-invitation-copy]');
+        if (copyTrigger) {
+            const id = Number(copyTrigger.dataset.invitationCopy);
+            const invitation = currentInvitationState.list.find((item) => item.id === id) ?? null;
+            if (!invitation) return;
+            const url = `https://hotizjscshmmabyojhhx.supabase.co/functions/v1/share?slug=${encodeURIComponent(invitation.slug ?? '')}&v=${Date.now()}`;
+            await navigator.clipboard.writeText(url);
+            notify('Link undangan berhasil disalin.');
+            return;
+        }
+
+        const deleteTrigger = event.target.closest('[data-invitation-delete]');
+        if (deleteTrigger) {
+            const id = Number(deleteTrigger.dataset.invitationDelete);
+            if (!Number.isNaN(id) && window.confirm('Hapus undangan ini? Data akan terhapus dari daftar dan link tidak bisa dipakai lagi.')) {
+                try {
+                    const response = await request(`/rest/v1/invitations?id=eq.${id}`, {
+                        method: 'DELETE',
+                        headers: tokenHeaders(),
+                    });
+                    if (!response.ok) {
+                        throw new Error('Hapus undangan gagal.');
+                    }
+                    const session = getSession();
+                    if (session?.user?.id) {
+                        const invitations = await getInvitations(session.user.id);
+                        if (invitations.length) {
+                            currentInvitationState.id = invitations[0].id;
+                            loadForm(invitations[0], session.user.email);
+                        } else {
+                            currentInvitationState.id = null;
+                            document.getElementById('invitation-slug').value = '';
+                        }
+                        renderInvitationList(invitations);
+                    }
+                    notify('Undangan berhasil dihapus.');
+                } catch (error) {
+                    notify(error.message, 'warning');
+                }
+            }
+        }
+    };
 };
 
 const updateInvitation = async (id, values) => {
@@ -149,6 +271,7 @@ const removeStorageFiles = async (urls) => {
 };
 
 const loadForm = (invitation, email) => {
+    currentInvitationState.id = invitation.id ?? currentInvitationState.id;
     const content = invitation.content ?? {};
     setText('dashboard-email', email);
     setText('dashboard-name', invitation.groom_name && invitation.bride_name
@@ -230,7 +353,7 @@ const saveInvitation = async (button) => {
 
     button.disabled = true;
     try {
-        const invitation = await getInvitation(session.user.id);
+        const invitation = await getInvitation(session.user.id, currentInvitationState.id ?? undefined);
         if (!invitation) {
             throw new Error('Data undangan belum dibuat di tabel invitations.');
         }
@@ -293,6 +416,10 @@ const saveInvitation = async (button) => {
         if (shareImage) values.content.share_image_url = shareImage;
 
         await updateInvitation(invitation.id, values);
+        const invitations = await getInvitations(session.user.id);
+        const refreshedInvitation = invitations.find((item) => item.id === invitation.id) ?? { ...invitation, ...values };
+        currentInvitationState.id = refreshedInvitation.id ?? invitation.id;
+        renderInvitationList(invitations);
         loadForm({ ...invitation, ...values }, session.user.email);
         notify('Data undangan berhasil disimpan.');
     } catch (error) {
@@ -309,7 +436,7 @@ const deleteAsset = async (field, button) => {
     button.disabled = true;
 
     try {
-        const invitation = await getInvitation(session.user.id);
+        const invitation = await getInvitation(session.user.id, currentInvitationState.id ?? undefined);
         const content = { ...(invitation.content ?? {}) };
         const current = field === 'qris_url' || field === 'share_image_url' ? content[field] : invitation[field];
         const urls = Array.isArray(current) ? current : [current];
@@ -350,10 +477,15 @@ const init = () => {
     if (!session?.access_token || !session?.user?.id) {
         modal?.show();
     } else {
-        getInvitation(session.user.id).then((invitation) => {
-            if (invitation) {
-                loadForm(invitation, session.user.email);
+        getInvitations(session.user.id).then((invitations) => {
+            if (invitations.length) {
+                currentInvitationState.id = invitations[0].id;
+                renderInvitationList(invitations);
+                bindInvitationList();
+                loadForm(invitations[0], session.user.email);
             } else {
+                renderInvitationList([]);
+                bindInvitationList();
                 notify('Buat satu data undangan di tabel invitations terlebih dahulu.', 'warning');
             }
         }).catch((error) => notify(error.message, 'warning'));
